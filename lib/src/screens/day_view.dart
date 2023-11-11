@@ -72,9 +72,15 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                     currentTime: dateTime,
                                     locale: LocaleType.jp);
                               },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "時間を入力してください。";
+                                }
+                                return null;
+                              },
                             ),
                             const SizedBox(height: 12),
-                            TextField(
+                            TextFormField(
                               controller: amountInputController,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
@@ -90,6 +96,12 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               onChanged: (newValue) {
                                 amountInputController.text =
                                     newValue.toString();
+                              },
+                              validator: (value) {
+                                if (value == null || value.length < 2) {
+                                  return "飲んだ量を入力してください。";
+                                }
+                                return null;
                               },
                             ),
                             const SizedBox(height: 12),
