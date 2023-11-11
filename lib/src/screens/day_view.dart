@@ -42,7 +42,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                         child: Column(
                           children: [
                             const SizedBox(height: 15),
-                            const Text('新規で登録',
+                            const Text('ミルクを飲んだ量と時間を登録します',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 )),
