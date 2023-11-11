@@ -108,6 +108,14 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                 memoInputController.text = newValue.toString();
                               },
                             ),
+                            const SizedBox(height: 15),
+                            ElevatedButton(
+                                onPressed: () {
+                                  if (formKey.currentState!.validate()) {
+                                    print("OK!");
+                                  }
+                                },
+                                child: const Text('登録する'))
                           ],
                         ),
                       ),
