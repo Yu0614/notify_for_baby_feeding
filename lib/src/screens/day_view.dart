@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'; // https://pub.dev/packages/flutter_datetime_picker_plus
 
@@ -11,6 +10,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
+  final amountInputController = TextEditingController(text: "");
   final memoInputController = TextEditingController(text: "");
 
   double screenHeight = MediaQuery.of(context).size.height;
@@ -73,7 +73,26 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                     locale: LocaleType.jp);
                               },
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: amountInputController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              decoration: const InputDecoration(
+                                icon: Icon(Icons.water_drop_outlined),
+                                labelText: 'ml',
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0))),
+                              ),
+                              onChanged: (newValue) {
+                                amountInputController.text =
+                                    newValue.toString();
+                              },
+                            ),
+                            const SizedBox(height: 12),
                             TextFormField(
                               controller: memoInputController,
                               maxLines: 2,
@@ -87,7 +106,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               ),
                               onChanged: (newValue) {
                                 memoInputController.text = newValue.toString();
-                                print(memoInputController.text);
                               },
                             ),
                           ],
