@@ -41,12 +41,12 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                         padding: const EdgeInsets.only(left: 40.0, right: 40.0),
                         child: Column(
                           children: [
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 30),
                             const Text('ミルクを飲んだ量と時間を登録します',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 )),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 40),
                             TextFormField(
                               controller: dateTimeInputController,
                               decoration: const InputDecoration(
@@ -111,7 +111,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               keyboardType: TextInputType.multiline,
                               decoration: const InputDecoration(
                                 icon: Icon(Icons.face),
-                                labelText: '特記事項',
+                                labelText: 'メモ',
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(10.0))),
@@ -120,7 +120,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                 memoInputController.text = newValue.toString();
                               },
                             ),
-                            const SizedBox(height: 15),
+                            const SizedBox(height: 25),
                             ElevatedButton(
                                 onPressed: () {
                                   if (formKey.currentState!.validate()) {
