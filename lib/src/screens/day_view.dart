@@ -11,6 +11,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
+  final memoInputController = TextEditingController(text: "");
 
   double screenHeight = MediaQuery.of(context).size.height;
   showModalBottomSheet(
@@ -74,6 +75,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
+                              controller: memoInputController,
                               maxLines: 2,
                               keyboardType: TextInputType.multiline,
                               decoration: const InputDecoration(
@@ -83,8 +85,9 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(10.0))),
                               ),
-                              onSaved: (newValue) {
-                                // memo = newValue.toString();
+                              onChanged: (newValue) {
+                                memoInputController.text = newValue.toString();
+                                print(memoInputController.text);
                               },
                             ),
                           ],
