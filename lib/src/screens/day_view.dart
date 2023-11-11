@@ -7,8 +7,10 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 
 void _settingModalBottomSheet(context, formattedDate, dateTime) {
+  const formatType = 'yyyy-MM-dd HH:mm';
   final formKey = GlobalKey<FormState>();
-  final dateTimeInputController = TextEditingController();
+  final dateTimeInputController =
+      TextEditingController(text: DateFormat(formatType).format(dateTime));
 
   double screenHeight = MediaQuery.of(context).size.height;
   showModalBottomSheet(
@@ -43,14 +45,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 )),
-                            Text(formattedDate,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                )),
-                            Text(dateTime.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                )),
                             const SizedBox(height: 30),
                             TextFormField(
                               controller: dateTimeInputController,
@@ -64,19 +58,21 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               onTap: () {
                                 DatePicker.showTimePicker(context,
                                     showTitleActions: true,
-                                    showSecondsColumn: true, onChanged: (date) {
-                                  dateTimeInputController.text =
-                                      date.toString();
-                                  print(date.toString());
+                                    showSecondsColumn: false,
+                                    onChanged: (date) {
+                                  formattedDate =
+                                      DateFormat(formatType).format(date);
+                                  dateTimeInputController.text = formattedDate;
                                 }, onConfirm: (date) {
-                                  print(date.toString());
-                                  dateTimeInputController.text =
-                                      date.toString();
+                                  formattedDate =
+                                      DateFormat(formatType).format(date);
+                                  dateTimeInputController.text = formattedDate;
                                 },
                                     currentTime: dateTime,
                                     locale: LocaleType.jp);
                               },
                             ),
+                            const SizedBox(height: 10),
                             TextFormField(
                               maxLines: 2,
                               keyboardType: TextInputType.multiline,
