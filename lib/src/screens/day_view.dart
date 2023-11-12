@@ -38,14 +38,48 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                             // backgroundColor: Colors.red,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0))),
-                        padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                         child: Column(
                           children: [
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'キャンセル',
+                                    style: TextStyle(
+                                      color: Colors.lightBlue,
+                                    ),
+                                  ),
+                                ),
+                                const Text('新規登録',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15)),
+                                TextButton(
+                                  onPressed: formKey.currentState == null ||
+                                          !formKey.currentState!.validate()
+                                      ? null
+                                      : () {
+                                          print("ok!");
+                                        },
+                                  child: const Text(
+                                    '登録する',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 30),
-                            const Text('ミルクを飲んだ量と時間を登録します',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                )),
+                            const Text(
+                              'ミルクを飲んだ量と時間を登録します',
+                            ),
                             const SizedBox(height: 40),
                             TextFormField(
                               controller: dateTimeInputController,
@@ -107,7 +141,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                             const SizedBox(height: 12),
                             TextFormField(
                               controller: memoInputController,
-                              maxLines: 2,
+                              maxLines: 10,
                               keyboardType: TextInputType.multiline,
                               decoration: const InputDecoration(
                                 icon: Icon(Icons.face),
@@ -120,14 +154,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                 memoInputController.text = newValue.toString();
                               },
                             ),
-                            const SizedBox(height: 25),
-                            ElevatedButton(
-                                onPressed: () {
-                                  if (formKey.currentState!.validate()) {
-                                    print("OK!");
-                                  }
-                                },
-                                child: const Text('登録する'))
                           ],
                         ),
                       ),
