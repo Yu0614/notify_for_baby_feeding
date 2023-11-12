@@ -61,12 +61,10 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15)),
                                 TextButton(
-                                  onPressed: formKey.currentState == null ||
-                                          !formKey.currentState!.validate()
-                                      ? null
-                                      : () {
-                                          print("ok!");
-                                        },
+                                  onPressed: () {
+                                    print("ok!");
+                                    Navigator.of(context).pop();
+                                  },
                                   child: const Text(
                                     '登録する',
                                     style: TextStyle(
