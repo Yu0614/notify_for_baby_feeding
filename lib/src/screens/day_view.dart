@@ -31,7 +31,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
           builder: (BuildContext context, StateSetter setState) {
             return SizedBox(
               height: isInputting
-                  ? screenHeight + MediaQuery.of(context).viewInsets.bottom
+                  ? screenHeight * 0.755 + MediaQuery.of(context).viewInsets.bottom
                   : screenHeight,
               child: Center(
                 child: Column(
@@ -87,11 +87,11 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 20),
                             const Text(
                               'ミルクを飲んだ量と時間を登録します',
                             ),
-                            const SizedBox(height: 40),
+                            const SizedBox(height: 30),
                             TextFormField(
                               controller: dateTimeInputController,
                               keyboardType: TextInputType.none,
@@ -129,9 +129,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                             TextFormField(
                               controller: amountInputController,
                               keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
                               decoration: const InputDecoration(
                                 icon: Icon(Icons.water_drop_outlined),
                                 labelText: 'ml',
@@ -167,7 +164,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               onFieldSubmitted: (value) =>
                                   {isInputting = false},
                               onTapOutside: (value) => {isInputting = false},
-
                               onChanged: (newValue) {
                                 memoInputController.text = newValue.toString();
                               },
