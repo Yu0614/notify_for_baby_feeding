@@ -13,7 +13,12 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
   final amountInputController = TextEditingController(text: "");
   final memoInputController = TextEditingController(text: "");
 
-  double screenHeight = MediaQuery.of(context).size.height;
+  const screenHeightMagnification = 0.7;
+  double screenHeight =
+      MediaQuery.of(context).size.height * screenHeightMagnification;
+
+  bool isInputting = false;
+
   showModalBottomSheet(
       context: context,
       isScrollControlled: true, //  画面半分よりも大きなモーダルの表示設定
@@ -25,20 +30,28 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return SizedBox(
-              height: screenHeight * 0.7,
+              height: isInputting
+                  ? screenHeight + MediaQuery.of(context).viewInsets.bottom
+                  : screenHeight,
               child: Center(
                 child: Column(
                   children: <Widget>[
                     Form(
                       key: formKey,
                       child: Container(
-                        height: screenHeight * 0.7,
+                        height: isInputting
+                            ? screenHeight +
+                                MediaQuery.of(context).viewInsets.bottom
+                            : screenHeight,
                         decoration: const BoxDecoration(
                             color: Color(0xFFF5F5F5),
                             // backgroundColor: Colors.red,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0))),
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                        padding: const EdgeInsets.only(
+                          left: 15.0,
+                          right: 15.0,
+                        ),
                         child: Column(
                           children: [
                             const SizedBox(height: 10),
@@ -139,8 +152,9 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                             const SizedBox(height: 12),
                             TextFormField(
                               controller: memoInputController,
-                              maxLines: 10,
+                              maxLines: 7,
                               keyboardType: TextInputType.multiline,
+                              textInputAction: TextInputAction.newline,
                               decoration: const InputDecoration(
                                 icon: Icon(Icons.face),
                                 labelText: 'メモ',
@@ -148,6 +162,11 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(10.0))),
                               ),
+                              onTap: () => {isInputting = true},
+                              onFieldSubmitted: (value) =>
+                                  {isInputting = false},
+                              onTapOutside: (value) => {isInputting = false},
+                              
                               onChanged: (newValue) {
                                 memoInputController.text = newValue.toString();
                               },
