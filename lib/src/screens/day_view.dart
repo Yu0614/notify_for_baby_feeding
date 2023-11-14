@@ -94,6 +94,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                             const SizedBox(height: 40),
                             TextFormField(
                               controller: dateTimeInputController,
+                              keyboardType: TextInputType.none,
                               decoration: const InputDecoration(
                                 icon: Icon(Icons.calendar_today),
                                 labelText: '時間',
@@ -166,7 +167,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               onFieldSubmitted: (value) =>
                                   {isInputting = false},
                               onTapOutside: (value) => {isInputting = false},
-                              
+
                               onChanged: (newValue) {
                                 memoInputController.text = newValue.toString();
                               },
