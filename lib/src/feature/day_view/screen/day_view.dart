@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
 import 'package:intl/intl.dart';
-import '../feature/day_view/parts/show_modal_bottom_sheet_for_register.dart';
+import '../parts/show_modal_bottom_sheet_for_register.dart';
 
 /// A day view that displays dynamically added events.
 class DynamicDayView extends StatefulWidget {

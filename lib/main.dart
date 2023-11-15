@@ -1,5 +1,5 @@
-import 'package:notify_for_baby_feeding/src/demo/week_view.dart';
-import 'package:notify_for_baby_feeding/src/screens/day_view.dart';
+import 'package:notify_for_baby_feeding/src/feature/demo/screen/week_view.dart';
+import 'package:notify_for_baby_feeding/src/feature/day_view/screen/day_view.dart';
 import 'package:flutter/material.dart';
 
 /// First plugin test method.
