@@ -13,10 +13,9 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
   final amountInputController = TextEditingController(text: "");
   final memoInputController = TextEditingController(text: "");
 
-  const screenHeightMagnification = 0.7;
+  const screenHeightMagnification = 0.5;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
-  final screenHeightWithKeyboard = screenHeight + 150;
 
   bool isInputting = false;
 
@@ -37,7 +36,9 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
               },
               behavior: HitTestBehavior.opaque, // これを追加！！！
               child: SizedBox(
-                height: isInputting ? screenHeightWithKeyboard : screenHeight,
+                height: isInputting
+                    ? screenHeight + MediaQuery.of(context).viewInsets.bottom
+                    : screenHeight,
                 child: Center(
                   child: Column(
                     children: <Widget>[
@@ -45,7 +46,8 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                         key: formKey,
                         child: Container(
                           height: isInputting
-                              ? screenHeightWithKeyboard
+                              ? screenHeight +
+                                  MediaQuery.of(context).viewInsets.bottom
                               : screenHeight,
                           decoration: const BoxDecoration(
                               color: Color(0xFFF5F5F5),
