@@ -81,8 +81,10 @@ void showModalBottomSheetForRegister(context, formattedDate, dateTime) {
                                           fontSize: 15)),
                                   TextButton(
                                     onPressed: () {
-                                      print("ok!");
-                                      Navigator.of(context).pop();
+                                      if (formKey.currentState!.validate()) {
+                                        print("ok!");
+                                        Navigator.of(context).pop();
+                                      }
                                     },
                                     child: const Text(
                                       '登録する',
@@ -174,14 +176,8 @@ void showModalBottomSheetForRegister(context, formattedDate, dateTime) {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(10.0))),
                                 ),
-                                onTap: () => {isInputting = true},
-                                onFieldSubmitted: (value) =>
-                                    {isInputting = false},
-                                onTapOutside: (value) => {isInputting = false},
-                                onChanged: (newValue) {
-                                  memoInputController.text =
-                                      newValue.toString();
-                                },
+                                onTap: () => isInputting = true,
+                                onTapOutside: (v) => isInputting = false,
                               ),
                             ],
                           ),
