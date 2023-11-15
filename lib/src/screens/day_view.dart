@@ -138,6 +138,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                 keyboardType: TextInputType.number,
                                 maxLength: 3,
                                 decoration: const InputDecoration(
+                                  counterText: '',
                                   icon: Icon(Icons.water_drop_outlined),
                                   labelText: 'ml',
                                   border: OutlineInputBorder(
