@@ -31,7 +31,10 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              onTap: () => {
+                FocusManager.instance.primaryFocus?.unfocus(),
+                isInputting = false
+              },
               behavior: HitTestBehavior.opaque, // これを追加！！！
               child: SizedBox(
                 height: isInputting ? screenHeightWithKeyboard : screenHeight,
@@ -105,7 +108,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                           Radius.circular(10.0))),
                                 ),
                                 onTap: () {
-                                  isInputting = true;
                                   DatePicker.showTimePicker(context,
                                       showTitleActions: true,
                                       showSecondsColumn: false,
@@ -115,7 +117,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                     dateTimeInputController.text =
                                         formattedDate;
                                   }, onConfirm: (date) {
-                                    isInputting = false;
                                     formattedDate =
                                         DateFormat(formatType).format(date);
                                     dateTimeInputController.text =
@@ -130,9 +131,6 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                                   }
                                   return null;
                                 },
-                                onFieldSubmitted: (value) =>
-                                    {isInputting = false},
-                                onTapOutside: (value) => {isInputting = false},
                               ),
                               const SizedBox(height: 12),
                               TextFormField(
