@@ -43,18 +43,18 @@ class _NavigationState extends State<Navigation> {
           NavigationDestination(
             selectedIcon: Icon(Icons.calendar_today),
             icon: Icon(Icons.calendar_today_outlined),
-            label: 'ホーム',
+            label: '今日のミルク記録',
           ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.calendar_month),
-            icon: Icon(Icons.calendar_month_outlined),
-            label: '今週の履歴',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.analytics),
-            icon: Icon(Icons.analytics_outlined),
-            label: '分析レポート',
-          ),
+          // NavigationDestination(
+          //   selectedIcon: Icon(Icons.calendar_month),
+          //   icon: Icon(Icons.calendar_month_outlined),
+          //   label: '今週の履歴',
+          // ),
+          // NavigationDestination(
+          //   selectedIcon: Icon(Icons.analytics),
+          //   icon: Icon(Icons.analytics_outlined),
+          //   label: '分析レポート',
+          // ),
           NavigationDestination(
             selectedIcon: Icon(Icons.settings),
             icon: Icon(Icons.settings_outlined),
@@ -64,12 +64,12 @@ class _NavigationState extends State<Navigation> {
       ),
       body: <Widget>[
         const DynamicDayView(),
-        const DemoWeekView(),
-        Container(
-          color: Colors.blue,
-          alignment: Alignment.center,
-          child: const Text('分析レポート'),
-        ),
+        // const DemoWeekView(),
+        // Container(
+        //   color: Colors.blue,
+        //   alignment: Alignment.center,
+        //   child: const Text('分析レポート'),
+        // ),
         Container(
           color: Colors.blue,
           alignment: Alignment.center,
