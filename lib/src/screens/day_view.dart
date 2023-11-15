@@ -136,6 +136,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
                               TextFormField(
                                 controller: amountInputController,
                                 keyboardType: TextInputType.number,
+                                maxLength: 3,
                                 decoration: const InputDecoration(
                                   icon: Icon(Icons.water_drop_outlined),
                                   labelText: 'ml',
