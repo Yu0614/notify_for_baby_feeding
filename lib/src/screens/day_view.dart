@@ -16,6 +16,7 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
   const screenHeightMagnification = 0.7;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
+  final screenHeightWithKeyboard = screenHeight + 150;
 
   bool isInputting = false;
 
@@ -29,150 +30,164 @@ void _settingModalBottomSheet(context, formattedDate, dateTime) {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return SizedBox(
-              height: isInputting
-                  ? screenHeight * 0.755 + MediaQuery.of(context).viewInsets.bottom
-                  : screenHeight,
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Form(
-                      key: formKey,
-                      child: Container(
-                        height: isInputting
-                            ? screenHeight +
-                                MediaQuery.of(context).viewInsets.bottom
-                            : screenHeight,
-                        decoration: const BoxDecoration(
-                            color: Color(0xFFF5F5F5),
-                            // backgroundColor: Colors.red,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        padding: const EdgeInsets.only(
-                          left: 15.0,
-                          right: 15.0,
-                        ),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    'キャンセル',
-                                    style: TextStyle(
-                                      color: Colors.lightBlue,
+            return GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              behavior: HitTestBehavior.opaque, // これを追加！！！
+              child: SizedBox(
+                height: isInputting ? screenHeightWithKeyboard : screenHeight,
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      Form(
+                        key: formKey,
+                        child: Container(
+                          height: isInputting
+                              ? screenHeightWithKeyboard
+                              : screenHeight,
+                          decoration: const BoxDecoration(
+                              color: Color(0xFFF5F5F5),
+                              // backgroundColor: Colors.red,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          padding: const EdgeInsets.only(
+                            left: 15.0,
+                            right: 15.0,
+                          ),
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text(
+                                      'キャンセル',
+                                      style: TextStyle(
+                                        color: Colors.lightBlue,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const Text('新規登録',
-                                    style: TextStyle(
+                                  const Text('新規登録',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15)),
+                                  TextButton(
+                                    onPressed: () {
+                                      print("ok!");
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text(
+                                      '登録する',
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 15)),
-                                TextButton(
-                                  onPressed: () {
-                                    print("ok!");
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text(
-                                    '登録する',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                'ミルクを飲んだ量と時間を登録します',
+                              ),
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                controller: dateTimeInputController,
+                                keyboardType: TextInputType.none,
+                                decoration: const InputDecoration(
+                                  icon: Icon(Icons.calendar_today),
+                                  labelText: '時間',
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0))),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'ミルクを飲んだ量と時間を登録します',
-                            ),
-                            const SizedBox(height: 30),
-                            TextFormField(
-                              controller: dateTimeInputController,
-                              keyboardType: TextInputType.none,
-                              decoration: const InputDecoration(
-                                icon: Icon(Icons.calendar_today),
-                                labelText: '時間',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0))),
-                              ),
-                              onTap: () {
-                                DatePicker.showTimePicker(context,
-                                    showTitleActions: true,
-                                    showSecondsColumn: false,
-                                    onChanged: (date) {
-                                  formattedDate =
-                                      DateFormat(formatType).format(date);
-                                  dateTimeInputController.text = formattedDate;
-                                }, onConfirm: (date) {
-                                  formattedDate =
-                                      DateFormat(formatType).format(date);
-                                  dateTimeInputController.text = formattedDate;
+                                onTap: () {
+                                  isInputting = true;
+                                  DatePicker.showTimePicker(context,
+                                      showTitleActions: true,
+                                      showSecondsColumn: false,
+                                      onChanged: (date) {
+                                    formattedDate =
+                                        DateFormat(formatType).format(date);
+                                    dateTimeInputController.text =
+                                        formattedDate;
+                                  }, onConfirm: (date) {
+                                    isInputting = false;
+                                    formattedDate =
+                                        DateFormat(formatType).format(date);
+                                    dateTimeInputController.text =
+                                        formattedDate;
+                                  },
+                                      currentTime: dateTime,
+                                      locale: LocaleType.jp);
                                 },
-                                    currentTime: dateTime,
-                                    locale: LocaleType.jp);
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "時間を入力してください。";
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              controller: amountInputController,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                icon: Icon(Icons.water_drop_outlined),
-                                labelText: 'ml',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0))),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "時間を入力してください。";
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (value) =>
+                                    {isInputting = false},
+                                onTapOutside: (value) => {isInputting = false},
                               ),
-                              onChanged: (newValue) {
-                                amountInputController.text =
-                                    newValue.toString();
-                              },
-                              validator: (value) {
-                                if (value == null || value.length < 2) {
-                                  return "飲んだ量を入力してください。";
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              controller: memoInputController,
-                              maxLines: 7,
-                              keyboardType: TextInputType.multiline,
-                              textInputAction: TextInputAction.newline,
-                              decoration: const InputDecoration(
-                                icon: Icon(Icons.face),
-                                labelText: 'メモ',
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0))),
+                              const SizedBox(height: 12),
+                              TextFormField(
+                                controller: amountInputController,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  icon: Icon(Icons.water_drop_outlined),
+                                  labelText: 'ml',
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0))),
+                                ),
+                                onTap: () => {isInputting = true},
+                                onFieldSubmitted: (value) =>
+                                    {isInputting = false},
+                                onTapOutside: (value) => {isInputting = false},
+                                onChanged: (newValue) {
+                                  amountInputController.text =
+                                      newValue.toString();
+                                },
+                                validator: (value) {
+                                  if (value == null || value.length < 2) {
+                                    return "飲んだ量を入力してください。";
+                                  }
+                                  return null;
+                                },
                               ),
-                              onTap: () => {isInputting = true},
-                              onFieldSubmitted: (value) =>
-                                  {isInputting = false},
-                              onTapOutside: (value) => {isInputting = false},
-                              onChanged: (newValue) {
-                                memoInputController.text = newValue.toString();
-                              },
-                            ),
-                          ],
+                              const SizedBox(height: 12),
+                              TextFormField(
+                                controller: memoInputController,
+                                maxLines: 5,
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.newline,
+                                decoration: const InputDecoration(
+                                  icon: Icon(Icons.face),
+                                  labelText: 'メモ',
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0))),
+                                ),
+                                onTap: () => {isInputting = true},
+                                onFieldSubmitted: (value) =>
+                                    {isInputting = false},
+                                onTapOutside: (value) => {isInputting = false},
+                                onChanged: (newValue) {
+                                  memoInputController.text =
+                                      newValue.toString();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
