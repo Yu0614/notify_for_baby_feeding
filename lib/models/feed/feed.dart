@@ -16,13 +16,13 @@ class FeedModel with _$FeedModel {
     @JsonKey(name: 'amount') @Default(0) int? amount,
 
     /// feedを行う日付 UnixTime
-    @JsonKey(name: 'feed_at') @Default(0) DateTime? feedAt,
+    @JsonKey(name: 'feed_at') @Default(null) DateTime? feedAt,
 
     /// 作成日 UnixTime
-    @JsonKey(name: 'created_at') @Default(0) DateTime? createdAt,
+    @JsonKey(name: 'created_at') @Default(null) DateTime? createdAt,
 
     /// 更新日 UnixTime
-    @JsonKey(name: 'updated_at') @Default(0) DateTime? updatedAt,
+    @JsonKey(name: 'updated_at') @Default(null) DateTime? updatedAt,
   }) = _FeedModel;
 
   const FeedModel._();

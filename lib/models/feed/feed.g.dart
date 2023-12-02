@@ -12,13 +12,13 @@ _$FeedModelImpl _$$FeedModelImplFromJson(Map<String, dynamic> json) =>
       memo: json['memo'] as String? ?? '',
       amount: json['amount'] as int? ?? 0,
       feedAt: json['feed_at'] == null
-          ? 0
+          ? null
           : DateTime.parse(json['feed_at'] as String),
       createdAt: json['created_at'] == null
-          ? 0
+          ? null
           : DateTime.parse(json['created_at'] as String),
       updatedAt: json['updated_at'] == null
-          ? 0
+          ? null
           : DateTime.parse(json['updated_at'] as String),
     );
 

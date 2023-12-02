@@ -180,9 +180,9 @@ class _$FeedModelImpl extends _FeedModel {
       {this.id,
       this.memo = '',
       @JsonKey(name: 'amount') this.amount = 0,
-      @JsonKey(name: 'feed_at') this.feedAt = 0,
-      @JsonKey(name: 'created_at') this.createdAt = 0,
-      @JsonKey(name: 'updated_at') this.updatedAt = 0})
+      @JsonKey(name: 'feed_at') this.feedAt = null,
+      @JsonKey(name: 'created_at') this.createdAt = null,
+      @JsonKey(name: 'updated_at') this.updatedAt = null})
       : super._();
 
   factory _$FeedModelImpl.fromJson(Map<String, dynamic> json) =>

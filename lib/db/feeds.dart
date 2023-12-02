@@ -27,7 +27,7 @@ class FeedsDBAccessor {
     // ダブルクォートもしくはシングルクォート3つ重ねることで改行で文字列を作成できる。$変数名は、クラス内の変数のこと（文字列の中で使える）
     await db.execute('''
           CREATE TABLE IF NOT EXISTS feeds(
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             memo TEXT DEFAULT '',
             amount INTEGER NOT NULL ,
             feed_at TIMESTAMP,
@@ -43,7 +43,9 @@ class FeedsDBAccessor {
     required Map<String, Object?> json,
   }) async {
     final db = await database;
-    return db.insert("feeds", json);
+    final result = db.insert("feeds", json);
+    print(result);
+    return result;
   }
 
   /// tableからデータを取得する
