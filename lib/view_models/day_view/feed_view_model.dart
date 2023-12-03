@@ -35,20 +35,37 @@ class FeedViewModel {
     );
   } // データが何故か保存できないので調べるところから
 
+  // idで対象の feed を検索
+  Future<Result<List<FeedModel>>> findById(int id) async {
+    const where = "id = ?";
+    final whereArgs = [id];
+
+    final result =
+        await feedRepository.fetch(where: where, whereArgs: whereArgs);
+    print('find by id: $result');
+
+    return result.when(
+      success: (data) {
+        return Result.success(data: data);
+      },
+      failure: (error) {
+        return Result.failure(error: error);
+      },
+    );
+  }
+
   /// [feed]を保存する
   /// primary keyがなければsave, あればupdateをする
-  Future<Result<int>> save(FeedModel feed) async {
+  Future<Result<List<FeedModel>>> save(FeedModel feed) async {
     feed = feed.copyWith(createdAt: DateTime.now(), updatedAt: DateTime.now());
 
     if (feed.id == null) {
       final saveData = feed.copyWith();
-      final result = await feedRepository.save(saveData);
-      print(result);
-      print(result.dataOrThrow);
+      final saveResult = await feedRepository.save(saveData);
+      final savedFeed = await findById(saveResult.dataOrThrow);
 
-      return result.when(
+      return savedFeed.when(
         success: (data) {
-          loadByDate(saveData.feedAt);
           return Result.success(data: data);
         },
         failure: (error) {
@@ -56,10 +73,11 @@ class FeedViewModel {
         },
       );
     } else {
-      final result = await feedRepository.update(feed);
-      return result.when(
+      final updateResult = await feedRepository.update(feed);
+      final updatedFeed = await findById(updateResult.dataOrThrow);
+
+      return updatedFeed.when(
         success: (data) {
-          loadByDate(DateTime.now());
           return Result.success(data: data);
         },
         failure: (error) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
+
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'; // https://pub.dev/packages/flutter_datetime_picker_plus
 
 import 'package:intl/intl.dart';
@@ -8,7 +10,7 @@ import 'package:notify_for_baby_feeding/models/feed/feed.dart';
 import '../../../../view_models/day_view/feed_view_model.dart';
 import '../../../../repository/feed_repository.dart';
 
-void showModalBottomSheetForRegister(context, formattedDate, dateTime) {
+void showModalBottomSheetForRegister(context, formattedDate, dateTime, events) {
   final feedViewModel = FeedViewModel(FeedRepository());
   const formatType = 'yyyy-MM-dd HH:mm';
   final formKey = GlobalKey<FormState>();
@@ -85,7 +87,7 @@ void showModalBottomSheetForRegister(context, formattedDate, dateTime) {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15)),
                                   TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (formKey.currentState!.validate()) {
                                         FeedModel feed = FeedModel.fromJson({
                                           "memo": memoInputController.text,
@@ -94,8 +96,26 @@ void showModalBottomSheetForRegister(context, formattedDate, dateTime) {
                                           "feed_at": dateTime.toIso8601String()
                                         });
 
-                                        feedViewModel.save(feed);
-                                        Navigator.of(context).pop();
+                                        final res =
+                                            await feedViewModel.save(feed);
+
+                                        if (res.isFailure) {
+                                          return;
+                                        }
+
+                                        setState(() {
+                                          events.add(FlutterWeekViewEvent(
+                                            title:
+                                                "ミルク ${events.length + 1} 回目 ${feed.amount} ml",
+                                            start: dateTime,
+                                            end: dateTime
+                                                .add(const Duration(minutes: 40)),
+                                            description: "",
+                                            padding: const EdgeInsets.all(10),
+                                          ));
+
+                                          Navigator.of(context).pop();
+                                        });
                                       }
                                     },
                                     child: const Text(

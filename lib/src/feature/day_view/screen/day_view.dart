@@ -47,6 +47,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         ],
       ),
       body: DayView(
+        events: events,
         initialTime: HourMinute.fromDateTime(
             dateTime: now.copyWith(
                 minute: now.minute - 30)), // 常に現在時から描画してしまうので30分ずらす
@@ -56,7 +57,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
             dateFormatter: (int year, int month, int day) => '生後xx日'),
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
-          showModalBottomSheetForRegister(context, formattedDate, dateTime);
+          showModalBottomSheetForRegister(
+              context, formattedDate, dateTime, events);
         },
         // dragAndDropOptions: DragAndDropOptions(
         //   onEventDragged: (FlutterWeekViewEvent event, DateTime newStartTime) {
