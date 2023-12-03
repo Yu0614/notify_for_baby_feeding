@@ -3,8 +3,8 @@ import '../models/feed/feed.dart';
 import '../models/result/result.dart';
 import 'base.dart';
 
-class FeedRepositoryImpl implements RepositoryBase<FeedModel> {
-  FeedRepositoryImpl();
+class FeedRepository implements RepositoryBase<FeedModel> {
+  FeedRepository();
 
   /// [where]は id = ? のような形式にする
   @override

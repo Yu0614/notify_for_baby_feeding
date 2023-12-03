@@ -43,9 +43,8 @@ class FeedsDBAccessor {
     required Map<String, Object?> json,
   }) async {
     final db = await database;
-    final result = db.insert("feeds", json);
-    print(result);
-    return result;
+
+    return db.insert("feeds", json);
   }
 
   /// tableからデータを取得する
