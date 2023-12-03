@@ -12,13 +12,14 @@ class FeedViewModel {
   final FeedRepository feedRepository;
 
   /// 1日分のデータを取得する
-  Future<Result<List<FeedModel>>> loadByDate(date) async {
-    final startOfDate = DateTime(date.year, date.month, date.day, 00, 00);
+  Future<Result<List<FeedModel>>> loadByDate(DateTime? date) async {
+    date ??= DateTime.now();
+    final startOfDate = DateTime(date.year, date.month, date.day, 0, 0);
     final endOfDate = DateTime(date.year, date.month, date.day, 23, 59);
-    const where = "date between ? and ?";
+    const where = "feed_at between ? and ?";
     final whereArgs = [
-      startOfDate.millisecondsSinceEpoch,
-      endOfDate.millisecondsSinceEpoch
+      startOfDate.toIso8601String(),
+      endOfDate.toIso8601String()
     ];
     // print(whereArgs);
     final result =
@@ -36,17 +37,19 @@ class FeedViewModel {
 
   /// [feed]を保存する
   /// primary keyがなければsave, あればupdateをする
-  Future<Result<String>> save(FeedModel feed) async {
+  Future<Result<int>> save(FeedModel feed) async {
     feed = feed.copyWith(createdAt: DateTime.now(), updatedAt: DateTime.now());
 
     if (feed.id == null) {
       final saveData = feed.copyWith();
       final result = await feedRepository.save(saveData);
+      print(result);
+      print(result.dataOrThrow);
 
       return result.when(
         success: (data) {
           loadByDate(saveData.feedAt);
-          return Result.success(data: saveData.id!.toString());
+          return Result.success(data: data);
         },
         failure: (error) {
           return Result.failure(error: error);
@@ -57,7 +60,7 @@ class FeedViewModel {
       return result.when(
         success: (data) {
           loadByDate(DateTime.now());
-          return Result.success(data: feed.id!.toString());
+          return Result.success(data: data);
         },
         failure: (error) {
           return Result.failure(error: error);
