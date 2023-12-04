@@ -93,7 +93,10 @@ void showModalBottomSheetForRegister(context, formattedDate, dateTime, events) {
                                           "memo": memoInputController.text,
                                           "amount": int.parse(
                                               amountInputController.text),
-                                          "feed_at": dateTime.toIso8601String()
+                                          "feed_at": DateTime.parse(
+                                                  dateTimeInputController.text)
+                                              .toIso8601String()
+                                          //dateTime.toIso8601String()
                                         });
 
                                         final res =
@@ -107,9 +110,10 @@ void showModalBottomSheetForRegister(context, formattedDate, dateTime, events) {
                                           events.add(FlutterWeekViewEvent(
                                             title:
                                                 "ミルク ${events.length + 1} 回目 ${feed.amount} ml",
-                                            start: dateTime,
-                                            end: dateTime
-                                                .add(const Duration(minutes: 40)),
+                                            start: DateTime.parse(
+                                                dateTimeInputController.text),
+                                            end: dateTime.add(
+                                                const Duration(minutes: 45)),
                                             description: "",
                                             padding: const EdgeInsets.all(10),
                                           ));
