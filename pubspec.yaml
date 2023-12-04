@@ -50,6 +50,7 @@ dependencies:
   uuid: ^4.2.1
   flutter_riverpod: ^2.4.9
   riverpod_annotation: ^2.3.3
+  logger: ^2.0.2+1
 
 
 dev_dependencies:
