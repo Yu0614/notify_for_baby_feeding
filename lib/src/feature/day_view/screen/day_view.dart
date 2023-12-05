@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+import 'package:notify_for_baby_feeding/models/feed/feed.dart';
+import 'package:notify_for_baby_feeding/models/result/result.dart';
+
 import '../parts/show_modal_bottom_sheet_for_register.dart';
+import '../../../../view_models/day_view/feed_view_model.dart';
+import '../../../../repository/feed_repository.dart';
+
+final logger = Logger();
 
 /// A day view that displays dynamically added events.
 class DynamicDayView extends StatefulWidget {
@@ -13,8 +21,32 @@ class DynamicDayView extends StatefulWidget {
 
 /// The dynamic day view state.
 class DynamicDayViewState extends State<DynamicDayView> {
-  /// The added events.
   List<FlutterWeekViewEvent> events = [];
+  final feedViewModel = FeedViewModel(FeedRepository());
+  late Result<List<FeedModel>> result;
+
+  @override
+  void initState() {
+    super.initState();
+    DateTime feedAt;
+    Future(
+      () async {
+        result = await feedViewModel.loadByDate(DateTime.now());
+        for (final data in result.dataOrThrow) {
+          feedAt = data.feedAt as DateTime;
+          setState(() {
+            events.add(FlutterWeekViewEvent(
+              title: "ミルク ${events.length + 1} 回目 ${data.amount} ml",
+              start: DateTime.parse(feedAt.toIso8601String()),
+              end: feedAt.add(const Duration(minutes: 45)),
+              description: "",
+              padding: const EdgeInsets.all(10),
+            ));
+          });
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +90,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(
-              context, formattedDate, dateTime, events);
+              context, formattedDate, dateTime, events, feedViewModel);
         },
         // dragAndDropOptions: DragAndDropOptions(
         //   onEventDragged: (FlutterWeekViewEvent event, DateTime newStartTime) {
