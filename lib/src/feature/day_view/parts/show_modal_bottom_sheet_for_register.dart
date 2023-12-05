@@ -7,11 +7,8 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:notify_for_baby_feeding/models/feed/feed.dart';
 
-import '../../../../view_models/day_view/feed_view_model.dart';
-import '../../../../repository/feed_repository.dart';
-
-void showModalBottomSheetForRegister(context, formattedDate, dateTime, events) {
-  final feedViewModel = FeedViewModel(FeedRepository());
+void showModalBottomSheetForRegister(
+    context, formattedDate, dateTime, events, feedViewModel) {
   const formatType = 'yyyy-MM-dd HH:mm';
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
