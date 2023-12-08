@@ -39,7 +39,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
               title: "ミルク ${events.length + 1} 回目 ${data.amount} ml",
               start: DateTime.parse(feedAt.toIso8601String()),
               end: feedAt.add(const Duration(minutes: 45)),
-              description: "",
+              description: data.id.toString(),
               padding: const EdgeInsets.all(10),
             ));
           });

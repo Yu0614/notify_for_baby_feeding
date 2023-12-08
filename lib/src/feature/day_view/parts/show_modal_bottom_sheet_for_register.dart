@@ -111,7 +111,8 @@ void showModalBottomSheetForRegister(
                                                 dateTimeInputController.text),
                                             end: dateTime.add(
                                                 const Duration(minutes: 45)),
-                                            description: "",
+                                            description: res.dataOrThrow[0].id
+                                                .toString(),
                                             padding: const EdgeInsets.all(10),
                                           ));
 
