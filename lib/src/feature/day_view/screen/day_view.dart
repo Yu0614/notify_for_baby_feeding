@@ -59,17 +59,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
         actions: [
           IconButton(
             onPressed: () {
-              // _settingModalBottomSheet(context, true, formattedDate);
-              // setState(() {
-              //   DateTime start = DateTime(now.year, now.month, now.day,
-              //       Random().nextInt(24), Random().nextInt(60));
-              //   events.add(FlutterWeekViewEvent(
-              //     title: 'Evento ${events.length + 1}',
-              //     start: start,
-              //     end: start.add(const Duration(hours: 1)),
-              //     description: 'A description.',
-              //   ));
-              // });
+              showModalBottomSheetForRegister(context, formattedDate,
+                  roundTimeToFitGrid(now), events, feedViewModel);
             },
             icon: const Icon(
               Icons.add,
