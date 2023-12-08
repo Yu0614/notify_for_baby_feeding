@@ -83,24 +83,29 @@ class DynamicDayViewState extends State<DynamicDayView> {
           showModalBottomSheetForRegister(
               context, formattedDate, dateTime, events, feedViewModel);
         },
-        // dragAndDropOptions: DragAndDropOptions(
-        //   onEventDragged: (FlutterWeekViewEvent event, DateTime newStartTime) {
-        //     DateTime roundedTime = roundTimeToFitGrid(now,
-        //         gridGranularity: const Duration(minutes: 15));
-        //     event.shiftEventTo(roundedTime);
-        //     setState(() {
-        //       /* State set is the shifted event's time. */
-        //     });
-        //   },
-        // ),
-        // resizeEventOptions: ResizeEventOptions(
-        //   onEventResized: (FlutterWeekViewEvent event, DateTime newEndTime) {
-        //     event.end = newEndTime;
-        //     setState(() {
-        //       /* State set is the resized event's time. */
-        //     });
-        //   },
-        // ),
+        dragAndDropOptions: DragAndDropOptions(
+          onEventDragged:
+              (FlutterWeekViewEvent event, DateTime newStartTime) async {
+            DateTime roundedTime = roundTimeToFitGrid(newStartTime,
+                gridGranularity: const Duration(minutes: 15));
+
+            var findResult = await feedViewModel.findById(int.parse(
+                event.description)); // event.descriptionに idを Stringで保存してある
+
+            if (findResult.isSuccess) {
+              final targetFeed = findResult.dataOrThrow[0];
+              final FeedModel newFeed = targetFeed.copyWith(
+                  feedAt: roundedTime, updatedAt: DateTime.now());
+              final saveResult = await feedViewModel.save(newFeed);
+
+              if (saveResult.isSuccess) {
+                setState(() {
+                  event.shiftEventTo(roundedTime);
+                });
+              }
+            }
+          },
+        ),
       ),
     );
   }

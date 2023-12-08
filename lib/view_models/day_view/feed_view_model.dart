@@ -1,6 +1,9 @@
 import '../../models/result/result.dart';
 import '../../models/feed/feed.dart';
 import '../../repository/feed_repository.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class FeedViewModel {
   /// constructor
@@ -42,7 +45,7 @@ class FeedViewModel {
 
     final result =
         await feedRepository.fetch(where: where, whereArgs: whereArgs);
-    print('find by id: $result');
+    logger.i('find by id: $result');
 
     return result.when(
       success: (data) {
@@ -73,8 +76,8 @@ class FeedViewModel {
         },
       );
     } else {
-      final updateResult = await feedRepository.update(feed);
-      final updatedFeed = await findById(updateResult.dataOrThrow);
+      await feedRepository.update(feed);
+      final updatedFeed = await findById(feed.id as int);
 
       return updatedFeed.when(
         success: (data) {

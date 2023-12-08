@@ -104,7 +104,7 @@ void showModalBottomSheetForRegister(
                                         }
 
                                         setState(() {
-                                          events.add(FlutterWeekViewEvent(
+                                          final event = FlutterWeekViewEvent(
                                             title:
                                                 "ミルク ${events.length + 1} 回目 ${feed.amount} ml",
                                             start: DateTime.parse(
@@ -114,7 +114,8 @@ void showModalBottomSheetForRegister(
                                             description: res.dataOrThrow[0].id
                                                 .toString(),
                                             padding: const EdgeInsets.all(10),
-                                          ));
+                                          );
+                                          events.add(event);
 
                                           Navigator.of(context).pop();
                                         });
