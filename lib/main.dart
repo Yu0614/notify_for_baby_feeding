@@ -1,9 +1,17 @@
 // import 'package:notify_for_baby_feeding/src/feature/demo/screen/week_view.dart';
 import 'package:notify_for_baby_feeding/src/feature/day_view/screen/day_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'dart:io';
 
 /// First plugin test method.
-void main() => runApp(const NotifyForBabyFeedingApp());
+void main() {
+  var widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  runApp(const NotifyForBabyFeedingApp());
+  sleep(const Duration(seconds: 1));
+  FlutterNativeSplash.remove();
+}
 
 class NotifyForBabyFeedingApp extends StatelessWidget {
   const NotifyForBabyFeedingApp({super.key});
