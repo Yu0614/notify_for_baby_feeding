@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:notify_for_baby_feeding/models/feed/feed.dart';
@@ -50,8 +51,12 @@ class DynamicDayViewState extends State<DynamicDayView> {
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting("ja");
+    const Locale("ja");
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy年MM月dd日').format(now);
+    String formattedDate =
+        '${DateFormat.yMMMd('ja').format(now)}(${DateFormat.E('ja').format(now)})';
+    int daysCountFromBirth = now.difference(DateTime(2023, 6, 6)).inDays;
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +82,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
         date: now,
         dayBarStyle: DayBarStyle.fromDate(
             date: now,
-            dateFormatter: (int year, int month, int day) => '生後xx日'),
+            dateFormatter: (int year, int month, int day) =>
+                '生後$daysCountFromBirth日'),
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(
