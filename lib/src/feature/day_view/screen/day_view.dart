@@ -36,10 +36,11 @@ class DynamicDayViewState extends State<DynamicDayView> {
         for (final data in result.dataOrThrow) {
           feedAt = data.feedAt as DateTime;
           setState(() {
+            var startTime = DateTime.parse(feedAt.toIso8601String());
             events.add(FlutterWeekViewEvent(
               title: "ミルク ${events.length + 1} 回目 ${data.amount} ml",
-              start: DateTime.parse(feedAt.toIso8601String()),
-              end: feedAt.add(const Duration(minutes: 45)),
+              start: startTime,
+              end: startTime.add(const Duration(minutes: 45)),
               description: data.id.toString(),
               padding: const EdgeInsets.all(10),
             ));
@@ -90,6 +91,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
               context, formattedDate, dateTime, events, feedViewModel);
         },
         dragAndDropOptions: DragAndDropOptions(
+          startingGesture: DragStartingGesture.longPress,
           onEventDragged:
               (FlutterWeekViewEvent event, DateTime newStartTime) async {
             DateTime roundedTime = roundTimeToFitGrid(newStartTime,
@@ -101,7 +103,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
             if (findResult.isSuccess) {
               final targetFeed = findResult.dataOrThrow[0];
               final FeedModel newFeed = targetFeed.copyWith(
-                  feedAt: roundedTime, updatedAt: DateTime.now());
+                feedAt: roundedTime,
+              );
               final saveResult = await feedViewModel.save(newFeed);
 
               if (saveResult.isSuccess) {
