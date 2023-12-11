@@ -26,6 +26,11 @@ class DynamicDayViewState extends State<DynamicDayView> {
   final feedViewModel = FeedViewModel(FeedRepository());
   late Result<List<FeedModel>> result;
 
+  callback(FeedModel newFeed) {
+    showModalBottomSheetForRegister(
+        context, newFeed.feedAt, events, feedViewModel);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +48,9 @@ class DynamicDayViewState extends State<DynamicDayView> {
               end: startTime.add(const Duration(minutes: 45)),
               description: data.id.toString(),
               padding: const EdgeInsets.all(10),
+              onTap: () {
+                callback(data);
+              },
             ));
           });
         }
@@ -65,8 +73,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
         actions: [
           IconButton(
             onPressed: () {
-              showModalBottomSheetForRegister(context, formattedDate,
-                  roundTimeToFitGrid(now), events, feedViewModel);
+              showModalBottomSheetForRegister(
+                  context, roundTimeToFitGrid(now), events, feedViewModel);
             },
             icon: const Icon(
               Icons.add,
@@ -88,7 +96,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(
-              context, formattedDate, dateTime, events, feedViewModel);
+              context, dateTime, events, feedViewModel);
         },
         dragAndDropOptions: DragAndDropOptions(
           startingGesture: DragStartingGesture.longPress,
