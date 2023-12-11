@@ -60,9 +60,10 @@ class FeedViewModel {
   /// [feed]を保存する
   /// primary keyがなければsave, あればupdateをする
   Future<Result<List<FeedModel>>> save(FeedModel feed) async {
-    feed = feed.copyWith(createdAt: DateTime.now(), updatedAt: DateTime.now());
-
     if (feed.id == null) {
+      feed =
+          feed.copyWith(createdAt: DateTime.now(), updatedAt: DateTime.now());
+
       final saveData = feed.copyWith();
       final saveResult = await feedRepository.save(saveData);
       final savedFeed = await findById(saveResult.dataOrThrow);
@@ -76,6 +77,9 @@ class FeedViewModel {
         },
       );
     } else {
+      feed =
+          feed.copyWith(updatedAt: DateTime.now());
+
       await feedRepository.update(feed);
       final updatedFeed = await findById(feed.id as int);
 
