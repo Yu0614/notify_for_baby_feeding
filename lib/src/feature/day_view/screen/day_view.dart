@@ -26,13 +26,21 @@ class DynamicDayViewState extends State<DynamicDayView> {
   final feedViewModel = FeedViewModel(FeedRepository());
   late Result<List<FeedModel>> result;
 
-  showModalCallBack(FeedModel newFeed) {
+  findFeed(FeedModel newFeed) async {
+    var res = await feedViewModel.findById(newFeed.id as int);
+    return res.dataOrThrow[0];
+  }
+
+  showModalCallBack(FeedModel newFeed) async {
+    final feed = await findFeed(newFeed);
+
+    // ignore: use_build_context_synchronously
     showModalBottomSheetForRegister(
         context,
-        newFeed.feedAt!,
+        feed.feedAt!,
         events,
         feedViewModel,
-        newFeed,
+        feed,
         showModalCallBack,
         deleteEventCallBack,
         editEventCallBack);
