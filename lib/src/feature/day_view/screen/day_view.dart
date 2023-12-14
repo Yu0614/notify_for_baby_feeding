@@ -46,9 +46,20 @@ class DynamicDayViewState extends State<DynamicDayView> {
         editEventCallBack);
   }
 
-  editEventCallBack(FlutterWeekViewEvent event, DateTime newDateTime) {
+  editEventCallBack(FeedModel feed, int index) {
     setState(() {
-      event.shiftEventTo(newDateTime);
+      final startTime = DateTime.parse(feed.feedAt!.toIso8601String());
+      events.removeAt(index);
+      events.add(FlutterWeekViewEvent(
+        title: "ミルク ${index + 1} 回目 ${feed.amount} ml",
+        start: startTime,
+        end: startTime.add(const Duration(minutes: 45)),
+        description: feed.id.toString(),
+        padding: const EdgeInsets.all(10),
+        onTap: () {
+          showModalCallBack(feed);
+        },
+      ));
     });
   }
 

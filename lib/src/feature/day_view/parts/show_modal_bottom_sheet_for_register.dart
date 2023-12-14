@@ -125,17 +125,18 @@ void showModalBottomSheetForRegister(
                                         }
 
                                         FlutterWeekViewEvent event;
+                                        int eventIndex;
 
                                         if (isTargetFeedExist) {
-                                          event = events.firstWhere((item) =>
-                                              item.description ==
-                                              targetFeed.id.toString());
+                                          eventIndex = events.indexWhere(
+                                              (item) =>
+                                                  item.description ==
+                                                  targetFeed.id.toString());
 
                                           editCallback!(
-                                              event,
-                                              DateTime.parse(
-                                                  dateTimeInputController
-                                                      .text));
+                                            feed,
+                                            eventIndex,
+                                          );
 
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context).pop();
