@@ -7,14 +7,22 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:notify_for_baby_feeding/models/feed/feed.dart';
 
-void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
+import '../../../../view_models/day_view/feed_view_model.dart';
+
+void showModalBottomSheetForRegister(BuildContext context, DateTime dateTime,
+    List<FlutterWeekViewEvent> events, FeedViewModel feedViewModel,
+    [Function? callback, FeedModel? targetFeed]) {
+  bool isTargetFeedExist = (targetFeed != null);
+  final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
   String formattedDate;
   const formatType = 'yyyy-MM-dd HH:mm';
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
-  final amountInputController = TextEditingController(text: "");
-  final memoInputController = TextEditingController(text: "");
+  final amountInputController = TextEditingController(
+      text: isTargetFeedExist ? targetFeed.amount.toString() : "");
+  final memoInputController =
+      TextEditingController(text: isTargetFeedExist ? targetFeed.memo : "");
 
   const screenHeightMagnification = 0.5;
   double screenHeight =
@@ -79,21 +87,27 @@ void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
                                       ),
                                     ),
                                   ),
-                                  const Text('新規登録',
-                                      style: TextStyle(
+                                  Text(modalTitle,
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15)),
                                   TextButton(
                                     onPressed: () async {
                                       if (formKey.currentState!.validate()) {
                                         FeedModel feed = FeedModel.fromJson({
+                                          "id": isTargetFeedExist
+                                              ? targetFeed.id
+                                              : null,
                                           "memo": memoInputController.text,
                                           "amount": int.parse(
                                               amountInputController.text),
                                           "feed_at": DateTime.parse(
                                                   dateTimeInputController.text)
-                                              .toIso8601String()
-                                          //dateTime.toIso8601String()
+                                              .toIso8601String(),
+                                          "created_at": isTargetFeedExist
+                                              ? targetFeed.createdAt
+                                                  ?.toIso8601String()
+                                              : null,
                                         });
 
                                         final res =
@@ -103,8 +117,20 @@ void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
                                           return;
                                         }
 
-                                        setState(() {
-                                          final event = FlutterWeekViewEvent(
+                                        int eventIndex;
+                                        FlutterWeekViewEvent event;
+
+                                        if (isTargetFeedExist) {
+                                          eventIndex = events.indexWhere(
+                                              (item) =>
+                                                  item.description ==
+                                                  targetFeed.id.toString());
+
+                                          setState(() {
+                                            // ここで実際の画面に反映したいがうまくいかない
+                                          });
+                                        } else {
+                                          event = FlutterWeekViewEvent(
                                             title:
                                                 "ミルク ${events.length + 1} 回目 ${feed.amount} ml",
                                             start: DateTime.parse(
@@ -114,12 +140,17 @@ void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
                                             description: res.dataOrThrow[0].id
                                                 .toString(),
                                             padding: const EdgeInsets.all(10),
+                                            onTap: () {
+                                              callback!(feed);
+                                            },
                                           );
-                                          events.add(event);
-
-                                          Navigator.of(context).pop();
-                                        });
+                                          setState(() {
+                                            events.add(event);
+                                          });
+                                        }
                                       }
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.of(context).pop();
                                     },
                                     child: const Text(
                                       '登録する',

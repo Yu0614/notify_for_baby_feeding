@@ -28,7 +28,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
 
   callback(FeedModel newFeed) {
     showModalBottomSheetForRegister(
-        context, newFeed.feedAt, events, feedViewModel);
+        context, newFeed.feedAt!, events, feedViewModel, callback, newFeed);
   }
 
   @override
@@ -73,8 +73,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
         actions: [
           IconButton(
             onPressed: () {
-              showModalBottomSheetForRegister(
-                  context, roundTimeToFitGrid(now), events, feedViewModel);
+              showModalBottomSheetForRegister(context, roundTimeToFitGrid(now),
+                  events, feedViewModel, callback);
             },
             icon: const Icon(
               Icons.add,
@@ -96,7 +96,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(
-              context, dateTime, events, feedViewModel);
+              context, dateTime, events, feedViewModel, callback);
         },
         dragAndDropOptions: DragAndDropOptions(
           startingGesture: DragStartingGesture.longPress,
