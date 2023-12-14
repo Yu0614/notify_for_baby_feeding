@@ -25,7 +25,7 @@ void showModalBottomSheetForRegister(
   bool isTargetFeedExist = (targetFeed != null);
   bool isInputting = false;
   final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
-  final modalButtonText = isTargetFeedExist ? "編集する" : "登録する";
+  final modalButtonText = isTargetFeedExist ? "変更を反映する" : "登録する";
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
