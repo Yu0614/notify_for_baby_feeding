@@ -19,10 +19,13 @@ void showModalBottomSheetForRegister(
   Function? deleteCallback,
   Function? editCallback,
 ]) {
-  bool isTargetFeedExist = (targetFeed != null);
-  final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
   String formattedDate;
   const formatType = 'yyyy-MM-dd HH:mm';
+
+  bool isTargetFeedExist = (targetFeed != null);
+  bool isInputting = false;
+  final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
+  final modalButtonText = isTargetFeedExist ? "編集する" : "登録する";
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
@@ -30,12 +33,9 @@ void showModalBottomSheetForRegister(
       text: isTargetFeedExist ? targetFeed.amount.toString() : "");
   final memoInputController =
       TextEditingController(text: isTargetFeedExist ? targetFeed.memo : "");
-
   const screenHeightMagnification = 0.5;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
-
-  bool isInputting = false;
 
   showModalBottomSheet(
       context: context,
@@ -162,9 +162,9 @@ void showModalBottomSheetForRegister(
                                         }
                                       }
                                     },
-                                    child: const Text(
-                                      '登録する',
-                                      style: TextStyle(
+                                    child: Text(
+                                      modalButtonText,
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
