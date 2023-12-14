@@ -32,8 +32,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
         newFeed.feedAt!,
         events,
         feedViewModel,
-        showModalCallBack,
         newFeed,
+        showModalCallBack,
         deleteEventCallBack,
         editEventCallBack);
   }
@@ -93,7 +93,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
           IconButton(
             onPressed: () {
               showModalBottomSheetForRegister(context, roundTimeToFitGrid(now),
-                  events, feedViewModel, showModalCallBack);
+                  events, feedViewModel, null, showModalCallBack);
             },
             icon: const Icon(
               Icons.add,
@@ -114,8 +114,8 @@ class DynamicDayViewState extends State<DynamicDayView> {
                 '生後$daysCountFromBirth日'),
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
-          showModalBottomSheetForRegister(
-              context, dateTime, events, feedViewModel, showModalCallBack);
+          showModalBottomSheetForRegister(context, dateTime, events,
+              feedViewModel, null, showModalCallBack);
         },
         dragAndDropOptions: DragAndDropOptions(
           startingGesture: DragStartingGesture.longPress,

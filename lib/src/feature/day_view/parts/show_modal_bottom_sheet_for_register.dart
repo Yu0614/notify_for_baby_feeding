@@ -14,8 +14,8 @@ void showModalBottomSheetForRegister(
   DateTime dateTime,
   List<FlutterWeekViewEvent> events,
   FeedViewModel feedViewModel, [
-  Function? callback,
   FeedModel? targetFeed,
+  Function? showModalCallBack,
   Function? deleteCallback,
   Function? editCallback,
 ]) {
@@ -151,7 +151,7 @@ void showModalBottomSheetForRegister(
                                                 .toString(),
                                             padding: const EdgeInsets.all(10),
                                             onTap: () {
-                                              callback!(feed);
+                                              showModalCallBack!(feed);
                                             },
                                           );
                                           setState(() {
