@@ -133,10 +133,7 @@ void showModalBottomSheetForRegister(
                                                   item.description ==
                                                   targetFeed.id.toString());
 
-                                          editCallback!(
-                                            feed,
-                                            eventIndex,
-                                          );
+                                          editCallback?.call(feed, eventIndex);
 
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context).pop();
