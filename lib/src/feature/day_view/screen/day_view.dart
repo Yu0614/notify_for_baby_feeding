@@ -26,9 +26,28 @@ class DynamicDayViewState extends State<DynamicDayView> {
   final feedViewModel = FeedViewModel(FeedRepository());
   late Result<List<FeedModel>> result;
 
-  callback(FeedModel newFeed) {
+  showModalCallBack(FeedModel newFeed) {
     showModalBottomSheetForRegister(
-        context, newFeed.feedAt!, events, feedViewModel, callback, newFeed);
+        context,
+        newFeed.feedAt!,
+        events,
+        feedViewModel,
+        showModalCallBack,
+        newFeed,
+        deleteEventCallBack,
+        editEventCallBack);
+  }
+
+  editEventCallBack(FlutterWeekViewEvent event, DateTime newDateTime) {
+    setState(() {
+      event.shiftEventTo(newDateTime);
+    });
+  }
+
+  deleteEventCallBack(FlutterWeekViewEvent event) {
+    setState(() {
+      events.remove(event);
+    });
   }
 
   @override
@@ -49,7 +68,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
               description: data.id.toString(),
               padding: const EdgeInsets.all(10),
               onTap: () {
-                callback(data);
+                showModalCallBack(data);
               },
             ));
           });
@@ -74,7 +93,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
           IconButton(
             onPressed: () {
               showModalBottomSheetForRegister(context, roundTimeToFitGrid(now),
-                  events, feedViewModel, callback);
+                  events, feedViewModel, showModalCallBack);
             },
             icon: const Icon(
               Icons.add,
@@ -96,7 +115,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(
-              context, dateTime, events, feedViewModel, callback);
+              context, dateTime, events, feedViewModel, showModalCallBack);
         },
         dragAndDropOptions: DragAndDropOptions(
           startingGesture: DragStartingGesture.longPress,

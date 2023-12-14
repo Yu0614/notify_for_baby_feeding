@@ -9,9 +9,16 @@ import 'package:notify_for_baby_feeding/models/feed/feed.dart';
 
 import '../../../../view_models/day_view/feed_view_model.dart';
 
-void showModalBottomSheetForRegister(BuildContext context, DateTime dateTime,
-    List<FlutterWeekViewEvent> events, FeedViewModel feedViewModel,
-    [Function? callback, FeedModel? targetFeed]) {
+void showModalBottomSheetForRegister(
+  BuildContext context,
+  DateTime dateTime,
+  List<FlutterWeekViewEvent> events,
+  FeedViewModel feedViewModel, [
+  Function? callback,
+  FeedModel? targetFeed,
+  Function? deleteCallback,
+  Function? editCallback,
+]) {
   bool isTargetFeedExist = (targetFeed != null);
   final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
   String formattedDate;
@@ -117,18 +124,21 @@ void showModalBottomSheetForRegister(BuildContext context, DateTime dateTime,
                                           return;
                                         }
 
-                                        int eventIndex;
                                         FlutterWeekViewEvent event;
 
                                         if (isTargetFeedExist) {
-                                          eventIndex = events.indexWhere(
-                                              (item) =>
-                                                  item.description ==
-                                                  targetFeed.id.toString());
+                                          event = events.firstWhere((item) =>
+                                              item.description ==
+                                              targetFeed.id.toString());
 
-                                          setState(() {
-                                            // ここで実際の画面に反映したいがうまくいかない
-                                          });
+                                          editCallback!(
+                                              event,
+                                              DateTime.parse(
+                                                  dateTimeInputController
+                                                      .text));
+
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(context).pop();
                                         } else {
                                           event = FlutterWeekViewEvent(
                                             title:
@@ -147,10 +157,10 @@ void showModalBottomSheetForRegister(BuildContext context, DateTime dateTime,
                                           setState(() {
                                             events.add(event);
                                           });
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(context).pop();
                                         }
                                       }
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.of(context).pop();
                                     },
                                     child: const Text(
                                       '登録する',
