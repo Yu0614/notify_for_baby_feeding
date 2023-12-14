@@ -51,7 +51,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
       final startTime = DateTime.parse(feed.feedAt!.toIso8601String());
       events.removeAt(index);
       events.add(FlutterWeekViewEvent(
-        title: "ミルク ${index + 1} 回目 ${feed.amount} ml",
+        title: "🍼 ${index + 1} 回目 ${feed.amount} ml",
         start: startTime,
         end: startTime.add(const Duration(minutes: 45)),
         description: feed.id.toString(),
@@ -81,7 +81,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
           setState(() {
             var startTime = DateTime.parse(feedAt.toIso8601String());
             events.add(FlutterWeekViewEvent(
-              title: "ミルク ${events.length + 1} 回目 ${data.amount} ml",
+              title: "🍼 ${events.length + 1} 回目 ${data.amount} ml",
               start: startTime,
               end: startTime.add(const Duration(minutes: 45)),
               description: data.id.toString(),

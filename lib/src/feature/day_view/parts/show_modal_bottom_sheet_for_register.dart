@@ -143,7 +143,7 @@ void showModalBottomSheetForRegister(
                                         } else {
                                           event = FlutterWeekViewEvent(
                                             title:
-                                                "ミルク ${events.length + 1} 回目 ${feed.amount} ml",
+                                                "🍼 ${events.length + 1} 回目 ${feed.amount} ml",
                                             start: DateTime.parse(
                                                 dateTimeInputController.text),
                                             end: dateTime.add(
