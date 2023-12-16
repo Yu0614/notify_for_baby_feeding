@@ -15,7 +15,7 @@ void showModalBottomSheetForRegister(
   List<FlutterWeekViewEvent> events,
   FeedViewModel feedViewModel, [
   FeedModel? targetFeed,
-  Function? showModalCallBack,
+  Function? createEventCallBack,
   Function? deleteCallback,
   Function? editCallback,
 ]) {
@@ -124,7 +124,6 @@ void showModalBottomSheetForRegister(
                                           return;
                                         }
 
-                                        FlutterWeekViewEvent event;
                                         int eventIndex;
 
                                         if (isTargetFeedExist) {
@@ -138,23 +137,21 @@ void showModalBottomSheetForRegister(
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context).pop();
                                         } else {
-                                          event = FlutterWeekViewEvent(
-                                            title:
-                                                "🍼 ${events.length + 1} 回目 ${feed.amount} ml",
-                                            start: DateTime.parse(
-                                                dateTimeInputController.text),
-                                            end: dateTime.add(
-                                                const Duration(minutes: 45)),
-                                            description: res.dataOrThrow[0].id
-                                                .toString(),
-                                            padding: const EdgeInsets.all(10),
-                                            onTap: () {
-                                              showModalCallBack!(feed);
-                                            },
+                                          final title =
+                                              "🍼 ${events.length + 1} 回目 ${feed.amount} ml";
+                                          final start = DateTime.parse(
+                                              dateTimeInputController.text);
+
+                                          final description =
+                                              res.dataOrThrow[0].id.toString();
+
+                                          createEventCallBack!(
+                                            title,
+                                            start,
+                                            description,
+                                            res.dataOrThrow[0],
                                           );
-                                          setState(() {
-                                            events.add(event);
-                                          });
+
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context).pop();
                                         }

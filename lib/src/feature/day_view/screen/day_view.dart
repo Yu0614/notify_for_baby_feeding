@@ -31,6 +31,26 @@ class DynamicDayViewState extends State<DynamicDayView> {
     return res.dataOrThrow[0];
   }
 
+  createEventCallBack(
+      String title, DateTime start, String description, FeedModel feed) {
+    logger.i("createEvent!");
+
+    final event = FlutterWeekViewEvent(
+      title: title,
+      start: start,
+      end: start.add(const Duration(minutes: 45)),
+      description: description,
+      padding: const EdgeInsets.all(10),
+      onTap: () {
+        showModalCallBack(feed);
+      },
+    );
+
+    setState(() {
+      events.add(event);
+    });
+  }
+
   showModalCallBack(FeedModel newFeed) async {
     final feed = await findFeed(newFeed);
 
@@ -41,26 +61,20 @@ class DynamicDayViewState extends State<DynamicDayView> {
         events,
         feedViewModel,
         feed,
-        showModalCallBack,
+        createEventCallBack,
         deleteEventCallBack,
         editEventCallBack);
   }
 
   editEventCallBack(FeedModel feed, int index) {
     setState(() {
-      final startTime = DateTime.parse(feed.feedAt!.toIso8601String());
       events.removeAt(index);
-      events.add(FlutterWeekViewEvent(
-        title: "🍼 ${index + 1} 回目 ${feed.amount} ml",
-        start: startTime,
-        end: startTime.add(const Duration(minutes: 45)),
-        description: feed.id.toString(),
-        padding: const EdgeInsets.all(10),
-        onTap: () {
-          showModalCallBack(feed);
-        },
-      ));
     });
+
+    final startTime = DateTime.parse(feed.feedAt!.toIso8601String());
+    final title = "🍼 ${index + 1} 回目 ${feed.amount} ml";
+    final description = feed.id.toString();
+    createEventCallBack(title, startTime, description, feed);
   }
 
   deleteEventCallBack(FlutterWeekViewEvent event) {
@@ -72,25 +86,16 @@ class DynamicDayViewState extends State<DynamicDayView> {
   @override
   void initState() {
     super.initState();
-    DateTime feedAt;
     Future(
       () async {
         result = await feedViewModel.loadByDate(DateTime.now());
         for (final data in result.dataOrThrow) {
-          feedAt = data.feedAt as DateTime;
-          setState(() {
-            var startTime = DateTime.parse(feedAt.toIso8601String());
-            events.add(FlutterWeekViewEvent(
-              title: "🍼 ${events.length + 1} 回目 ${data.amount} ml",
-              start: startTime,
-              end: startTime.add(const Duration(minutes: 45)),
-              description: data.id.toString(),
-              padding: const EdgeInsets.all(10),
-              onTap: () {
-                showModalCallBack(data);
-              },
-            ));
-          });
+          final feedAt = data.feedAt;
+          final title = "🍼 ${events.length + 1} 回目 ${data.amount} ml";
+          final description = data.id.toString();
+          final start = DateTime.parse(feedAt!.toIso8601String());
+
+          createEventCallBack(title, start, description, data);
         }
       },
     );
@@ -112,7 +117,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
           IconButton(
             onPressed: () {
               showModalBottomSheetForRegister(context, roundTimeToFitGrid(now),
-                  events, feedViewModel, null, showModalCallBack);
+                  events, feedViewModel, null, createEventCallBack);
             },
             icon: const Icon(
               Icons.add,
@@ -134,7 +139,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(context, dateTime, events,
-              feedViewModel, null, showModalCallBack);
+              feedViewModel, null, createEventCallBack);
         },
         dragAndDropOptions: DragAndDropOptions(
           startingGesture: DragStartingGesture.longPress,
