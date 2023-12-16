@@ -30,9 +30,9 @@ void showModalBottomSheetForRegister(
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
   final amountInputController = TextEditingController(
-      text: isTargetFeedExist ? targetFeed.amount.toString() : "");
+      text: isTargetFeedExist ? targetFeed?.amount.toString() : "");
   final memoInputController =
-      TextEditingController(text: isTargetFeedExist ? targetFeed.memo : "");
+      TextEditingController(text: isTargetFeedExist ? targetFeed?.memo : "");
   const screenHeightMagnification = 0.5;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
