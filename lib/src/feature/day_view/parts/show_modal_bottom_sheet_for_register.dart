@@ -7,20 +7,35 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:notify_for_baby_feeding/models/feed/feed.dart';
 
-void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
+import '../../../../view_models/day_view/feed_view_model.dart';
+
+void showModalBottomSheetForRegister(
+  BuildContext context,
+  DateTime dateTime,
+  List<FlutterWeekViewEvent> events,
+  FeedViewModel feedViewModel, [
+  FeedModel? targetFeed,
+  Function? createEventCallBack,
+  Function? deleteCallback,
+  Function? editCallback,
+]) {
   String formattedDate;
   const formatType = 'yyyy-MM-dd HH:mm';
+
+  bool isTargetFeedExist = (targetFeed != null);
+  bool isInputting = false;
+  final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
+  final modalButtonText = isTargetFeedExist ? "変更を反映する" : "登録する";
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
-  final amountInputController = TextEditingController(text: "");
-  final memoInputController = TextEditingController(text: "");
-
+  final amountInputController = TextEditingController(
+      text: isTargetFeedExist ? targetFeed?.amount.toString() : "");
+  final memoInputController =
+      TextEditingController(text: isTargetFeedExist ? targetFeed?.memo : "");
   const screenHeightMagnification = 0.5;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
-
-  bool isInputting = false;
 
   showModalBottomSheet(
       context: context,
@@ -79,21 +94,27 @@ void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
                                       ),
                                     ),
                                   ),
-                                  const Text('新規登録',
-                                      style: TextStyle(
+                                  Text(modalTitle,
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15)),
                                   TextButton(
                                     onPressed: () async {
                                       if (formKey.currentState!.validate()) {
                                         FeedModel feed = FeedModel.fromJson({
+                                          "id": isTargetFeedExist
+                                              ? targetFeed.id
+                                              : null,
                                           "memo": memoInputController.text,
                                           "amount": int.parse(
                                               amountInputController.text),
                                           "feed_at": DateTime.parse(
                                                   dateTimeInputController.text)
-                                              .toIso8601String()
-                                          //dateTime.toIso8601String()
+                                              .toIso8601String(),
+                                          "created_at": isTargetFeedExist
+                                              ? targetFeed.createdAt
+                                                  ?.toIso8601String()
+                                              : null,
                                         });
 
                                         final res =
@@ -103,27 +124,42 @@ void showModalBottomSheetForRegister(context, dateTime, events, feedViewModel) {
                                           return;
                                         }
 
-                                        setState(() {
-                                          final event = FlutterWeekViewEvent(
-                                            title:
-                                                "ミルク ${events.length + 1} 回目 ${feed.amount} ml",
-                                            start: DateTime.parse(
-                                                dateTimeInputController.text),
-                                            end: dateTime.add(
-                                                const Duration(minutes: 45)),
-                                            description: res.dataOrThrow[0].id
-                                                .toString(),
-                                            padding: const EdgeInsets.all(10),
-                                          );
-                                          events.add(event);
+                                        int eventIndex;
 
+                                        if (isTargetFeedExist) {
+                                          eventIndex = events.indexWhere(
+                                              (item) =>
+                                                  item.description ==
+                                                  targetFeed.id.toString());
+
+                                          editCallback?.call(feed, eventIndex);
+
+                                          // ignore: use_build_context_synchronously
                                           Navigator.of(context).pop();
-                                        });
+                                        } else {
+                                          final title =
+                                              "🍼 ${events.length + 1} 回目 ${feed.amount} ml";
+                                          final start = DateTime.parse(
+                                              dateTimeInputController.text);
+
+                                          final description =
+                                              res.dataOrThrow[0].id.toString();
+
+                                          createEventCallBack!(
+                                            title,
+                                            start,
+                                            description,
+                                            res.dataOrThrow[0],
+                                          );
+
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.of(context).pop();
+                                        }
                                       }
                                     },
-                                    child: const Text(
-                                      '登録する',
-                                      style: TextStyle(
+                                    child: Text(
+                                      modalButtonText,
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
