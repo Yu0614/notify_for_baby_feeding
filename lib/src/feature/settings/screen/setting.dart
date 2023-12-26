@@ -2,9 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class SettingsPage extends HookWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+class SettingsPage extends StatefulHookWidget {
+  const SettingsPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => SettingsPageState();
+}
+
+class SettingsPageState extends State<StatefulHookWidget> {
+  var isNotificationEnable = false;
+
+  dynamic switchNotifyEnable() {
+    setState(() {
+      isNotificationEnable = !isNotificationEnable;
+    });
+  }
 
   @override
   Widget build(
@@ -20,6 +34,7 @@ class SettingsPage extends HookWidget {
       children: [
         Expanded(
             child: SettingsList(
+          platform: DevicePlatform.iOS,
           sections: [
             SettingsSection(
               title: const Padding(
@@ -53,8 +68,13 @@ class SettingsPage extends HookWidget {
                 SettingsTile.switchTile(
                   leading: const Icon(Icons.notifications_sharp),
                   title: const Text('ミルクを飲む時間に通知する'),
-                  initialValue: false,
-                  onToggle: (value) {},
+                  initialValue: isNotificationEnable,
+                  onToggle: (v) {
+                    // 通知を許可してくれているか -> iOS
+                    //
+                    //
+                    switchNotifyEnable();
+                  },
                 )
               ],
             )
