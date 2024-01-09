@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -13,11 +15,42 @@ class SettingsPage extends StatefulHookWidget {
 
 class SettingsPageState extends State<StatefulHookWidget> {
   var isNotificationEnable = false;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   dynamic switchNotifyEnable() {
     setState(() {
       isNotificationEnable = !isNotificationEnable;
     });
+  }
+
+  Future<bool?> initializeNotification() async {
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: null,
+      iOS: initializationSettingsIOS,
+    );
+    return await flutterLocalNotificationsPlugin
+        .initialize(initializationSettings);
+  }
+
+  Future<bool?> requestPermission() async {
+    final bool? result = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+    return result;
   }
 
   @override
@@ -69,11 +102,21 @@ class SettingsPageState extends State<StatefulHookWidget> {
                   leading: const Icon(Icons.notifications_sharp),
                   title: const Text('ミルクを飲む時間に通知する'),
                   initialValue: isNotificationEnable,
-                  onToggle: (v) {
+                  onToggle: (v) async {
                     // 通知を許可してくれているか -> iOS
-                    //
-                    //
-                    switchNotifyEnable();
+                    WidgetsFlutterBinding.ensureInitialized();
+                    // 通知設定の初期化
+                    var result = await initializeNotification();
+
+                    if (result != null) {
+                      // 通知を許可してくれているか
+                      var permissionResult = await requestPermission();
+                      print(permissionResult);
+
+                      if (permissionResult != null) {
+                        switchNotifyEnable();
+                      }
+                    }
                   },
                 )
               ],
