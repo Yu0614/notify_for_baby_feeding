@@ -14,15 +14,8 @@ class SettingsPage extends StatefulHookWidget {
 }
 
 class SettingsPageState extends State<StatefulHookWidget> {
-  var isNotificationEnable = false;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
-  dynamic switchNotifyEnable() {
-    setState(() {
-      isNotificationEnable = !isNotificationEnable;
-    });
-  }
 
   Future<bool?> initializeNotification() async {
     const DarwinInitializationSettings initializationSettingsIOS =
@@ -51,6 +44,34 @@ class SettingsPageState extends State<StatefulHookWidget> {
           sound: true,
         );
     return result;
+  }
+
+  bool isNotificationEnable = false;
+
+  dynamic switchNotifyEnable() {
+    setState(() {
+      isNotificationEnable = !isNotificationEnable;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    var res = Future(
+      () async {
+        WidgetsFlutterBinding.ensureInitialized();
+        // 通知設定の初期化
+        await initializeNotification();
+        return await requestPermission();
+      },
+    );
+
+    res.then((value) {
+      setState(() {
+        isNotificationEnable = value ?? false;
+      });
+    });
   }
 
   @override
@@ -103,20 +124,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
                   title: const Text('ミルクを飲む時間に通知する'),
                   initialValue: isNotificationEnable,
                   onToggle: (v) async {
-                    // 通知を許可してくれているか -> iOS
-                    WidgetsFlutterBinding.ensureInitialized();
-                    // 通知設定の初期化
-                    var result = await initializeNotification();
-
-                    if (result != null) {
-                      // 通知を許可してくれているか
-                      var permissionResult = await requestPermission();
-                      print(permissionResult);
-
-                      if (permissionResult != null) {
-                        switchNotifyEnable();
-                      }
-                    }
+                    switchNotifyEnable();
                   },
                 )
               ],
