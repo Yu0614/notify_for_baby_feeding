@@ -55,6 +55,7 @@ dependencies:
   settings_ui: ^2.0.2
   package_info_plus: ^4.2.0
   flutter_local_notifications: ^16.2.0
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:
