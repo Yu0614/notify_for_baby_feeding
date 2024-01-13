@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulHookWidget {
   const SettingsPage({super.key});
@@ -43,12 +42,22 @@ class SettingsPageState extends State<StatefulHookWidget> {
           badge: true,
           sound: true,
         );
+    if (result != null && result) {
+      setState(() {
+        isApplicationNotifyEnable = true;
+      });
+    }
     return result;
   }
 
-  bool isNotificationEnable = false;
+  bool isNotificationEnable = false; // このアプリの通知
 
-  dynamic switchNotifyEnable() {
+  bool isApplicationNotifyEnable = false; // iOSアプリとしての通知
+
+  dynamic switchNotifyEnable() async {
+    var prefs = await SharedPreferences.getInstance();
+    var currentEnable = prefs.getBool("enable_notify") ?? false;
+    prefs.setBool("enable_notify", !currentEnable);
     setState(() {
       isNotificationEnable = !isNotificationEnable;
     });
@@ -58,20 +67,31 @@ class SettingsPageState extends State<StatefulHookWidget> {
   void initState() {
     super.initState();
 
-    var res = Future(
+    Future(
       () async {
+        var prefs = await SharedPreferences.getInstance();
+        final bool? enableNotify = prefs.getBool("enable_notify");
+
+        if (enableNotify != null) {
+          setState(() {
+            isNotificationEnable = enableNotify;
+          });
+        } else {
+          setState(() {
+            isNotificationEnable = false;
+          });
+        }
+
         WidgetsFlutterBinding.ensureInitialized();
         // 通知設定の初期化
         await initializeNotification();
-        return await requestPermission();
+        var res = await requestPermission();
+
+        setState(() {
+          isApplicationNotifyEnable = res!;
+        });
       },
     );
-
-    res.then((value) {
-      setState(() {
-        isNotificationEnable = value ?? false;
-      });
-    });
   }
 
   @override
@@ -124,9 +144,17 @@ class SettingsPageState extends State<StatefulHookWidget> {
                   title: const Text('ミルクを飲む時間に通知する'),
                   initialValue: isNotificationEnable,
                   onToggle: (v) async {
-                    switchNotifyEnable();
+                    var res = await requestPermission();
+
+                    if (res == true) {
+                      switchNotifyEnable();
+                    }
                   },
-                )
+                ),
+                SettingsTile(
+                    leading: const Icon(Icons.notification_important_sharp),
+                    title: const Text('アプリ自体の通知許可状態'),
+                    value: Text(isApplicationNotifyEnable ? "許可する": "許可しない")),
               ],
             )
           ],
