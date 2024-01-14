@@ -51,8 +51,8 @@ class SettingsPageState extends State<StatefulHookWidget> {
   }
 
   bool isNotificationEnable = false; // このアプリの通知
-
   bool isApplicationNotifyEnable = false; // iOSアプリとしての通知
+  late int notifyTimeDuration;
 
   dynamic switchNotifyEnable() async {
     var prefs = await SharedPreferences.getInstance();
@@ -70,6 +70,16 @@ class SettingsPageState extends State<StatefulHookWidget> {
     Future(
       () async {
         var prefs = await SharedPreferences.getInstance();
+
+        var tmpTimeDuration = prefs.getInt("notify_time_duration");
+        if (tmpTimeDuration == null) {
+          prefs.setInt("notify_time_duration", 4);
+        }
+
+        setState(() {
+          notifyTimeDuration = tmpTimeDuration!;
+        });
+
         final bool? enableNotify = prefs.getBool("enable_notify");
 
         if (enableNotify != null) {
@@ -154,7 +164,12 @@ class SettingsPageState extends State<StatefulHookWidget> {
                 SettingsTile(
                     leading: const Icon(Icons.notification_important_sharp),
                     title: const Text('アプリ自体の通知許可状態'),
-                    value: Text(isApplicationNotifyEnable ? "許可する": "許可しない")),
+                    value: Text(isApplicationNotifyEnable ? "許可する" : "許可しない")),
+                SettingsTile(
+                  leading: const Icon(Icons.punch_clock_sharp),
+                  title: const Text('通知の間隔'),
+                  value: Text('$notifyTimeDuration時間'),
+                ),
               ],
             )
           ],
