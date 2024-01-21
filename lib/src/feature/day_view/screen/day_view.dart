@@ -1,14 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
+
 import 'package:notify_for_baby_feeding/models/feed/feed.dart';
 import 'package:notify_for_baby_feeding/models/result/result.dart';
+import 'package:notify_for_baby_feeding/src/feature/day_view/parts/show_modal_bottom_sheet_for_register.dart';
+import 'package:notify_for_baby_feeding/view_models/day_view/feed_view_model.dart';
+import 'package:notify_for_baby_feeding/repository/feed_repository.dart';
 
-import '../parts/show_modal_bottom_sheet_for_register.dart';
-import '../../../../view_models/day_view/feed_view_model.dart';
-import '../../../../repository/feed_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 final logger = Logger();
 
@@ -25,14 +31,41 @@ class DynamicDayViewState extends State<DynamicDayView> {
   List<FlutterWeekViewEvent> events = [];
   final feedViewModel = FeedViewModel(FeedRepository());
   late Result<List<FeedModel>> result;
+  int totalFeedAmount = 0;
 
   findFeed(FeedModel newFeed) async {
     var res = await feedViewModel.findById(newFeed.id as int);
     return res.dataOrThrow[0];
   }
 
+  Future<void> setLocalNotification() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
+
+    final prefs = await SharedPreferences.getInstance();
+    final timeDuration = prefs.getInt("notify_time_duration") ?? 4; // 一旦4時間を設定
+    logger.i("timeDuration: $timeDuration");
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0, // id
+      'ミルク管理', // title
+      'ミルクの時間だよ🍼 早く飲みたいなぁ👶', // body
+      tz.TZDateTime.now(tz.local)
+          .add(Duration(hours: timeDuration)), // scheduledDateTime
+      const NotificationDetails(
+        iOS: DarwinNotificationDetails(
+          badgeNumber: 1,
+        ),
+      ),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
   createEventCallBack(
-      String title, DateTime start, String description, FeedModel feed) {
+      String title, DateTime start, String description, FeedModel feed, [bool setNotify = true]) {
     logger.i("createEvent!");
 
     final event = FlutterWeekViewEvent(
@@ -49,6 +82,10 @@ class DynamicDayViewState extends State<DynamicDayView> {
     setState(() {
       events.add(event);
     });
+
+    if (setNotify) {
+      setLocalNotification();
+    }
   }
 
   showModalCallBack(FeedModel newFeed) async {
@@ -95,7 +132,9 @@ class DynamicDayViewState extends State<DynamicDayView> {
           final description = data.id.toString();
           final start = DateTime.parse(feedAt!.toIso8601String());
 
-          createEventCallBack(title, start, description, data);
+          createEventCallBack(title, start, description, data, false);
+
+          totalFeedAmount += data.amount!;
         }
       },
     );
@@ -134,8 +173,9 @@ class DynamicDayViewState extends State<DynamicDayView> {
         date: now,
         dayBarStyle: DayBarStyle.fromDate(
             date: now,
+            color: Colors.blueGrey[50],
             dateFormatter: (int year, int month, int day) =>
-                '生後$daysCountFromBirth日'),
+                '生後$daysCountFromBirth日 / 今日は ${totalFeedAmount}ml 飲んだ'),
         onBackgroundTappedDown: (DateTime dateTime) {
           dateTime = roundTimeToFitGrid(dateTime);
           showModalBottomSheetForRegister(context, dateTime, events,
