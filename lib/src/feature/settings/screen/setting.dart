@@ -4,6 +4,8 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class SettingsPage extends StatefulHookWidget {
   const SettingsPage({super.key});
@@ -15,6 +17,9 @@ class SettingsPage extends StatefulHookWidget {
 class SettingsPageState extends State<StatefulHookWidget> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  bool isNotificationEnable = false; // このアプリの通知
+  bool isApplicationNotifyEnable = false; // iOSアプリとしての通知
+  late int notifyTimeDuration;
 
   Future<bool?> initializeNotification() async {
     const DarwinInitializationSettings initializationSettingsIOS =
@@ -50,9 +55,25 @@ class SettingsPageState extends State<StatefulHookWidget> {
     return result;
   }
 
-  bool isNotificationEnable = false; // このアプリの通知
-  bool isApplicationNotifyEnable = false; // iOSアプリとしての通知
-  late int notifyTimeDuration;
+  Future<void> scheduledNotification() async {
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0, // id
+      'ミルク管理', // title
+      'テスト通知', // body
+      tz.TZDateTime.now(tz.local)
+          .add(const Duration(seconds: 5)), // scheduledDateTime
+      const NotificationDetails(
+        iOS: DarwinNotificationDetails(
+          badgeNumber: 1,
+        ),
+      ),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
 
   dynamic switchNotifyEnable() async {
     var prefs = await SharedPreferences.getInstance();
@@ -169,6 +190,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
                   leading: const Icon(Icons.punch_clock_sharp),
                   title: const Text('通知の間隔'),
                   value: Text('$notifyTimeDuration時間'),
+                  onPressed: (context) => scheduledNotification(),
                 ),
               ],
             )
