@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
+import 'package:intl/intl.dart';
 
+import 'package:flutter_week_view/flutter_week_view.dart'; // https://pub.dev/packages/flutter_week_view
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'; // https://pub.dev/packages/flutter_datetime_picker_plus
 
-import 'package:intl/intl.dart';
 import 'package:notify_for_baby_feeding/models/feed/feed.dart';
-
-import '../../../../view_models/day_view/feed_view_model.dart';
+import 'package:notify_for_baby_feeding/view_models/day_view/feed_view_model.dart';
 
 void showModalBottomSheetForRegister(
   BuildContext context,
@@ -30,9 +29,9 @@ void showModalBottomSheetForRegister(
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
   final amountInputController = TextEditingController(
-      text: isTargetFeedExist ? targetFeed?.amount.toString() : "");
+      text: isTargetFeedExist ? targetFeed.amount.toString() : "");
   final memoInputController =
-      TextEditingController(text: isTargetFeedExist ? targetFeed?.memo : "");
+      TextEditingController(text: isTargetFeedExist ? targetFeed.memo : "");
   const screenHeightMagnification = 0.5;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
