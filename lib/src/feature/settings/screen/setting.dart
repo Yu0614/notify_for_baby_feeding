@@ -19,7 +19,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
       FlutterLocalNotificationsPlugin();
   bool isNotificationEnable = false; // このアプリの通知
   bool isApplicationNotifyEnable = false; // iOSアプリとしての通知
-  late int notifyTimeDuration;
+  late int notifyTimeDuration = 0;
 
   Future<bool?> initializeNotification() async {
     const DarwinInitializationSettings initializationSettingsIOS =
@@ -67,7 +67,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
           .add(const Duration(seconds: 5)), // scheduledDateTime
       const NotificationDetails(
         iOS: DarwinNotificationDetails(
-          badgeNumber: 1,
+          badgeNumber: null,
         ),
       ),
       uiLocalNotificationDateInterpretation:
@@ -90,6 +90,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
 
     Future(
       () async {
+        await initializeNotification();
         var prefs = await SharedPreferences.getInstance();
 
         var tmpTimeDuration = prefs.getInt("notify_time_duration");
@@ -113,9 +114,8 @@ class SettingsPageState extends State<StatefulHookWidget> {
           });
         }
 
-        WidgetsFlutterBinding.ensureInitialized();
         // 通知設定の初期化
-        await initializeNotification();
+        WidgetsFlutterBinding.ensureInitialized();
         var res = await requestPermission();
 
         setState(() {
