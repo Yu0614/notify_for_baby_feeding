@@ -59,26 +59,28 @@ class SettingsPageState extends State<StatefulHookWidget> {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0, // id
-      'ミルク管理', // title
-      'テスト通知', // body
-      tz.TZDateTime.now(tz.local)
-          .add(const Duration(seconds: 5)), // scheduledDateTime
-      const NotificationDetails(
-        iOS: DarwinNotificationDetails(
-          badgeNumber: null,
+    if (isNotificationEnable) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        0, // id
+        'ミルク管理', // title
+        'テスト通知', // body
+        tz.TZDateTime.now(tz.local)
+            .add(const Duration(seconds: 5)), // scheduledDateTime
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
+            badgeNumber: null,
+          ),
         ),
-      ),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
   }
 
   dynamic switchNotifyEnable() async {
     var prefs = await SharedPreferences.getInstance();
     var currentEnable = prefs.getBool("enable_notify") ?? false;
-    prefs.setBool("enable_notify", !currentEnable);
+    await prefs.setBool("enable_notify", !currentEnable);
     setState(() {
       isNotificationEnable = !isNotificationEnable;
     });
