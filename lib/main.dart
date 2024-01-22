@@ -1,5 +1,6 @@
 // import 'package:notify_for_baby_feeding/src/feature/demo/screen/week_view.dart';
 import 'package:notify_for_baby_feeding/src/feature/day_view/screen/day_view.dart';
+import 'package:notify_for_baby_feeding/src/feature/settings/screen/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'dart:io';
@@ -78,11 +79,7 @@ class _NavigationState extends State<Navigation> {
         //   alignment: Alignment.center,
         //   child: const Text('分析レポート'),
         // ),
-        Container(
-          color: Colors.blue,
-          alignment: Alignment.center,
-          child: const Text('設定'),
-        ),
+        const SettingsPage(),
       ][currentPageIndex],
     );
   }

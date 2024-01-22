@@ -24,10 +24,10 @@ class FeedViewModel {
       startOfDate.toIso8601String(),
       endOfDate.toIso8601String()
     ];
-    // print(whereArgs);
+
     final result =
         await feedRepository.fetch(where: where, whereArgs: whereArgs);
-    print(result);
+    logger.i('loadByDate: $result');
     return result.when(
       success: (data) {
         return Result.success(data: data);
@@ -77,8 +77,7 @@ class FeedViewModel {
         },
       );
     } else {
-      feed =
-          feed.copyWith(updatedAt: DateTime.now());
+      feed = feed.copyWith(updatedAt: DateTime.now());
 
       await feedRepository.update(feed);
       final updatedFeed = await findById(feed.id as int);
