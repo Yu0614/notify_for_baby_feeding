@@ -46,26 +46,37 @@ class DynamicDayViewState extends State<DynamicDayView> {
 
     final prefs = await SharedPreferences.getInstance();
     final timeDuration = prefs.getInt("notify_time_duration") ?? 4; // 一旦4時間を設定
+    final isNotificationEnable = prefs.getBool("enable_notify") ?? false;
     logger.i("timeDuration: $timeDuration");
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0, // id
-      'ミルク管理', // title
-      'ミルクの時間だよ🍼 早く飲みたいなぁ👶', // body
-      tz.TZDateTime.now(tz.local)
-          .add(Duration(hours: timeDuration)), // scheduledDateTime
-      const NotificationDetails(
-        iOS: DarwinNotificationDetails(
-          badgeNumber: 1,
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+
+    // アプリの通知が許可されていたら通知を設定
+    if (isNotificationEnable) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        0 + pendingNotificationRequests.length, // id
+        'ミルク管理', // title
+        'ミルクの時間だよ🍼 早く飲みたいなぁ👶', // body
+        tz.TZDateTime.now(tz.local)
+            .add(Duration(hours: timeDuration)), // scheduledDateTime
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentSound: true,
+            presentBanner: true,
+            badgeNumber: null,
+          ),
         ),
-      ),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
   }
 
   createEventCallBack(
-      String title, DateTime start, String description, FeedModel feed, [bool setNotify = true]) {
+      String title, DateTime start, String description, FeedModel feed,
+      [bool setNotify = true]) {
     logger.i("createEvent!");
 
     final event = FlutterWeekViewEvent(
