@@ -38,6 +38,22 @@ class DynamicDayViewState extends State<DynamicDayView> {
     return res.dataOrThrow[0];
   }
 
+  Future<void> loadEvents() async => Future(
+        () async {
+          result = await feedViewModel.loadByDate(DateTime.now());
+          for (final data in result.dataOrThrow) {
+            final feedAt = data.feedAt;
+            final title = "🍼 ${events.length + 1} 回目 ${data.amount} ml";
+            final description = data.id.toString();
+            final start = DateTime.parse(feedAt!.toIso8601String());
+
+            createEventCallBack(title, start, description, data, false);
+
+            totalFeedAmount += data.amount!;
+          }
+        },
+      );
+
   Future<void> setLocalNotification() async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
@@ -134,21 +150,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
   @override
   void initState() {
     super.initState();
-    Future(
-      () async {
-        result = await feedViewModel.loadByDate(DateTime.now());
-        for (final data in result.dataOrThrow) {
-          final feedAt = data.feedAt;
-          final title = "🍼 ${events.length + 1} 回目 ${data.amount} ml";
-          final description = data.id.toString();
-          final start = DateTime.parse(feedAt!.toIso8601String());
-
-          createEventCallBack(title, start, description, data, false);
-
-          totalFeedAmount += data.amount!;
-        }
-      },
-    );
+    loadEvents();
   }
 
   @override
