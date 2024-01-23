@@ -54,11 +54,12 @@ class DynamicDayViewState extends State<DynamicDayView> {
         },
       );
 
-  Future<void> setLocalNotification() async {
+  Future<void> setLocalNotification(feed) async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
     tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
+    final location = tz.getLocation("Asia/Tokyo");
+    tz.setLocalLocation(location);
 
     final prefs = await SharedPreferences.getInstance();
     final timeDuration = prefs.getInt("notify_time_duration") ?? 4; // 一旦4時間を設定
@@ -67,6 +68,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
 
     final List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    final scheduledDate = tz.TZDateTime.from(feed.feedAt!, location);
 
     // アプリの通知が許可されていたら通知を設定
     if (isNotificationEnable) {
@@ -74,8 +76,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
         0 + pendingNotificationRequests.length, // id
         'ミルク管理', // title
         'ミルクの時間だよ🍼 早く飲みたいなぁ👶', // body
-        tz.TZDateTime.now(tz.local)
-            .add(Duration(hours: timeDuration)), // scheduledDateTime
+        scheduledDate.add(Duration(hours: timeDuration)), // scheduledDateTime
         const NotificationDetails(
           iOS: DarwinNotificationDetails(
             presentAlert: true,
@@ -111,7 +112,7 @@ class DynamicDayViewState extends State<DynamicDayView> {
     });
 
     if (setNotify) {
-      setLocalNotification();
+      setLocalNotification(feed);
     }
   }
 
