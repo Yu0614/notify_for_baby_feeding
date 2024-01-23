@@ -19,7 +19,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
       FlutterLocalNotificationsPlugin();
   bool isNotificationEnable = false; // このアプリの通知
   bool isApplicationNotifyEnable = false; // iOSアプリとしての通知
-  late int notifyTimeDuration;
+  late int notifyTimeDuration = 0;
 
   Future<bool?> initializeNotification() async {
     const DarwinInitializationSettings initializationSettingsIOS =
@@ -59,26 +59,28 @@ class SettingsPageState extends State<StatefulHookWidget> {
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0, // id
-      'ミルク管理', // title
-      'テスト通知', // body
-      tz.TZDateTime.now(tz.local)
-          .add(const Duration(seconds: 5)), // scheduledDateTime
-      const NotificationDetails(
-        iOS: DarwinNotificationDetails(
-          badgeNumber: 1,
+    if (isNotificationEnable) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        0, // id
+        'ミルク管理', // title
+        'テスト通知', // body
+        tz.TZDateTime.now(tz.local)
+            .add(const Duration(seconds: 5)), // scheduledDateTime
+        const NotificationDetails(
+          iOS: DarwinNotificationDetails(
+            badgeNumber: null,
+          ),
         ),
-      ),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
   }
 
   dynamic switchNotifyEnable() async {
     var prefs = await SharedPreferences.getInstance();
     var currentEnable = prefs.getBool("enable_notify") ?? false;
-    prefs.setBool("enable_notify", !currentEnable);
+    await prefs.setBool("enable_notify", !currentEnable);
     setState(() {
       isNotificationEnable = !isNotificationEnable;
     });
@@ -90,6 +92,7 @@ class SettingsPageState extends State<StatefulHookWidget> {
 
     Future(
       () async {
+        await initializeNotification();
         var prefs = await SharedPreferences.getInstance();
 
         var tmpTimeDuration = prefs.getInt("notify_time_duration");
@@ -113,9 +116,8 @@ class SettingsPageState extends State<StatefulHookWidget> {
           });
         }
 
-        WidgetsFlutterBinding.ensureInitialized();
         // 通知設定の初期化
-        await initializeNotification();
+        WidgetsFlutterBinding.ensureInitialized();
         var res = await requestPermission();
 
         setState(() {
