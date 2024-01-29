@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -23,8 +24,11 @@ void showModalBottomSheetForRegister(
 
   bool isTargetFeedExist = (targetFeed != null);
   bool isInputting = false;
-  final modalTitle = isTargetFeedExist ? "編集" : "新規登録";
+  final modalTitle = isTargetFeedExist ? " 編集" : "新規登録";
   final modalButtonText = isTargetFeedExist ? "変更を反映する" : "登録する";
+  final informationText =
+      isTargetFeedExist ? "ミルクを飲んだ量と時間を変更します" : "ミルクを飲んだ量と時間を登録します";
+
   final formKey = GlobalKey<FormState>();
   final dateTimeInputController =
       TextEditingController(text: DateFormat(formatType).format(dateTime));
@@ -32,7 +36,7 @@ void showModalBottomSheetForRegister(
       text: isTargetFeedExist ? targetFeed.amount.toString() : "");
   final memoInputController =
       TextEditingController(text: isTargetFeedExist ? targetFeed.memo : "");
-  const screenHeightMagnification = 0.5;
+  final screenHeightMagnification = isTargetFeedExist ? 0.53 : 0.5;
   double screenHeight =
       MediaQuery.of(context).size.height * screenHeightMagnification;
 
@@ -166,9 +170,7 @@ void showModalBottomSheetForRegister(
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              const Text(
-                                'ミルクを飲んだ量と時間を登録します',
-                              ),
+                              Text(informationText),
                               const SizedBox(height: 20),
                               TextFormField(
                                 controller: dateTimeInputController,
@@ -248,6 +250,57 @@ void showModalBottomSheetForRegister(
                                 ),
                                 onTap: () => isInputting = true,
                                 onTapOutside: (v) => isInputting = false,
+                              ),
+                              const SizedBox(height: 5),
+                              Visibility(
+                                visible: isTargetFeedExist,
+                                child: TextButton(
+                                    onPressed: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoActionSheet(
+                                            title: const Text('この記録を削除しますか？'),
+                                            actions: [
+                                              CupertinoActionSheetAction(
+                                                child: const Text(
+                                                  '記録を削除',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                                onPressed: () => {
+                                                  Navigator.of(context).pop()
+                                                },
+                                              ),
+                                            ],
+                                            cancelButton: CupertinoButton(
+                                              child: const Text(
+                                                'キャンセル',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const SizedBox(
+                                        width: double.infinity,
+                                        child: Center(
+                                          child: Text(
+                                            '削除する',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ))),
                               ),
                             ],
                           ),
