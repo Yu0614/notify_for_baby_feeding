@@ -6,6 +6,16 @@
     * 産後の授乳管理・スケジュール管理に困っていた妻のために作成したアプリです。
       * ストア公開予定はありません。 
 
+## 機能一覧
+* 授乳の記録機能
+  * 作成・更新
+  * 一定時間後にpush通知する機能
+* 授乳記録の一覧参照機能（1日単位）
+* 設定機能
+  * 通知の許可
+  * 通知のon/off設定
+  * アプリバージョン表示
+  * 通知間隔の表示
 
 ## 画面一覧
 
@@ -47,12 +57,34 @@
 
 
 
-## 使用技術
+## 使用技術・ライブラリ
 
-* WIP
-
+* フレームワーク
+  * Flutter
+* データベース
+  * sqflite
+* 設定周り
+  * settings_ui
+  * shared_preferences
+  * flutter_local_notifications
+  * package_info_plus
+* 記録周り
+  * flutter_datetime_picker
+  * flutter_week_view
+  * freezed 
 
 ## ER図
-* WIP
 
+
+<img src='https://imgur.com/zQrB2A3.png' height='300'>
+
+
+
+## 残課題
+
+* 記録の削除機能
+* 週間での授乳記録の表示
+* ウィジェットでのアプリ導線
+* Siriで起動できるように
+* DBアクセス周りのコードリファクタ
 
